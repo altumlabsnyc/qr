@@ -32,10 +32,35 @@ export async function getStaticProps({
     .eq("id", id)
     .single();
 
+  const analyses = data?.lot?.flatMap((lot) =>
+    lot.samples.flatMap((sample) => sample.runs.flatMap((run) => run.analyses))
+  );
+
+  // Extract molecule_ids from the molecule_predictions
+  const moleculeIds = data?.lot?.flatMap((lot) =>
+    lot.samples.flatMap((sample) =>
+      sample.runs.flatMap((run) =>
+        run.analyses.flatMap((analysis) =>
+          analysis.molecule_predictions.map(
+            (molecule_prediction) => molecule_prediction.molecule_id
+          )
+        )
+      )
+    )
+  );
+
+  // Fetch corresponding molecules
+  const { data: moleculesData, error: moleculesError } = await supabase
+    .from("molecule")
+    .select("*")
+    .in("id", moleculeIds);
+
   const orderData = {
     ...data,
     lot: data?.lot[0],
+    molecules: moleculesData,
   } as OrderData | null;
+
   console.log("orderData", orderData);
   console.log("orderError", orderError);
 
@@ -43,6 +68,10 @@ export async function getStaticProps({
 
   if (orderError) {
     return { props: { error: orderError } };
+  }
+
+  if (moleculesError) {
+    return { props: { error: moleculesError } };
   }
 
   return {
