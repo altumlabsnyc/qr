@@ -1,3 +1,4 @@
+import "@/app/globals.css";
 import OrderDisplay, { OrderDisplayProps } from "@/components/OrderDisplay";
 import { OrderData } from "@/types/OrderData";
 import { supabase } from "@/utils/supabase";

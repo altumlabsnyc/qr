@@ -1,4 +1,6 @@
 import { OrderData } from "@/types/OrderData";
+import QRCodeWithBackgroundLogo from "./QRCodeWithBackgroundLogo";
+import QRCodeWithForegroundLogo from "./QRCodeWithForegroundLogo";
 
 export interface OrderDisplayProps {
   order?: OrderData;
@@ -42,7 +44,17 @@ export default function OrderDisplay({ order, error }: OrderDisplayProps) {
   console.log("chosen analysis", chosenAnalysis);
 
   return (
-    <div>
+    <div className="flex flex-col items-center">
+      <div className="flex gap-8 ">
+        <QRCodeWithForegroundLogo
+          text={`https://qr.plantalysis.com/${order.id}`}
+          logoSrc="/logoPretty.svg"
+        />
+        <QRCodeWithBackgroundLogo
+          text={`https://qr.plantalysis.com/${order.id}`}
+          logoSrc="/logoThick.svg"
+        />
+      </div>
       <h1>{order.id}</h1>
       <p>{order.pickup_date}</p>
       <p>{}</p>
