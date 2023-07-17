@@ -11,18 +11,21 @@ export interface Database {
     Tables: {
       analysis: {
         Row: {
+          accepted: boolean
           finished_at: string
           id: string
           run_id: string
           started_at: string | null
         }
         Insert: {
+          accepted?: boolean
           finished_at?: string
           id?: string
           run_id: string
           started_at?: string | null
         }
         Update: {
+          accepted?: boolean
           finished_at?: string
           id?: string
           run_id?: string
@@ -40,19 +43,19 @@ export interface Database {
       batch: {
         Row: {
           brand_id: string
-          facility_id: string
+          facility_id: string | null
           id: string
           weight: number | null
         }
         Insert: {
           brand_id: string
-          facility_id: string
+          facility_id?: string | null
           id?: string
           weight?: number | null
         }
         Update: {
           brand_id?: string
-          facility_id?: string
+          facility_id?: string | null
           id?: string
           weight?: number | null
         }
@@ -76,19 +79,19 @@ export interface Database {
           facility_id: string | null
           id: string
           name: string
-          producer_id: string
+          producer_user_id: string
         }
         Insert: {
           facility_id?: string | null
           id?: string
           name: string
-          producer_id: string
+          producer_user_id: string
         }
         Update: {
           facility_id?: string | null
           id?: string
           name?: string
-          producer_id?: string
+          producer_user_id?: string
         }
         Relationships: [
           {
@@ -98,8 +101,8 @@ export interface Database {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "brand_producer_id_fkey"
-            columns: ["producer_id"]
+            foreignKeyName: "brand_producer_user_id_fkey"
+            columns: ["producer_user_id"]
             referencedRelation: "producer_user"
             referencedColumns: ["id"]
           }
@@ -224,34 +227,24 @@ export interface Database {
       }
       lab_order: {
         Row: {
-          analysis_id: string | null
           id: string
           location: string | null
           pickup_date: string | null
           strain_info: string | null
         }
         Insert: {
-          analysis_id?: string | null
           id?: string
           location?: string | null
           pickup_date?: string | null
           strain_info?: string | null
         }
         Update: {
-          analysis_id?: string | null
           id?: string
           location?: string | null
           pickup_date?: string | null
           strain_info?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "lab_order_analysis_id_fkey"
-            columns: ["analysis_id"]
-            referencedRelation: "analysis"
-            referencedColumns: ["id"]
-          }
-        ]
+        Relationships: []
       }
       lab_user: {
         Row: {
@@ -289,18 +282,21 @@ export interface Database {
       }
       lot: {
         Row: {
-          batch_id: string
+          batch_id: string | null
           id: string
+          lab_order_id: string
           lot_weight: number
         }
         Insert: {
-          batch_id: string
+          batch_id?: string | null
           id?: string
+          lab_order_id: string
           lot_weight: number
         }
         Update: {
-          batch_id?: string
+          batch_id?: string | null
           id?: string
+          lab_order_id?: string
           lot_weight?: number
         }
         Relationships: [
@@ -308,6 +304,12 @@ export interface Database {
             foreignKeyName: "lot_batch_id_fkey"
             columns: ["batch_id"]
             referencedRelation: "batch"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lot_lab_order_id_fkey"
+            columns: ["lab_order_id"]
+            referencedRelation: "lab_order"
             referencedColumns: ["id"]
           }
         ]

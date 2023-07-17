@@ -1,56 +1,43 @@
-import { Database } from "@/types/supabase";
+import OrderDisplay, { OrderDisplayProps } from "@/components/OrderDisplay";
+import { OrderData } from "@/types/OrderData";
 import { supabase } from "@/utils/supabase";
 
-type Order = Database["public"]["Tables"]["lab_order"]["Row"];
-type Analysis = Database["public"]["Tables"]["analysis"]["Row"];
-
-interface Props {
-  order?: Order;
-  analysis?: Analysis;
-  error?: any;
-}
-
-export default function LabOrder({ order, analysis, error }: Props) {
-  console.log(order);
-
-  if (error) {
-    return (
-      <div>
-        <h1>Error</h1>
-      </div>
-    );
-  }
-
-  if (!order) {
-    return <h1>Order not found</h1>;
-  }
-
-  if (!analysis) {
-    return <h1>Analysis not found</h1>;
-  }
-
-  return (
-    <div>
-      <h1>{order.id}</h1>
-      <p>{order.pickup_date}</p>
-      <h2>{analysis.id}</h2>
-      <p>{}</p>
-    </div>
-  );
+export default function LabOrder({ order, error }: OrderDisplayProps) {
+  return <OrderDisplay order={order} error={error} />;
 }
 
 export async function getStaticProps({
   params,
 }: {
   params: { id: string };
-}): Promise<{ props: Props }> {
+}): Promise<{ props: OrderDisplayProps }> {
   const { id } = params;
 
-  const { data: orderData, error: orderError } = await supabase
+  const { data, error: orderError } = await supabase
     .from("lab_order")
-    .select("*")
+    .select(
+      `
+      *,
+      lot ( *,
+        samples:sample ( *, 
+          runs:run ( *,
+            analyses:analysis ( *,
+              molecule_predictions:molecule_prediction ( * )
+            )
+          )
+        )
+      )
+    `
+    )
     .eq("id", id)
     .single();
+
+  const orderData = {
+    ...data,
+    lot: data?.lot[0],
+  } as OrderData | null;
+  console.log("orderData", orderData);
+  console.log("orderError", orderError);
 
   if (!orderData) return { props: {} };
 
@@ -58,23 +45,9 @@ export async function getStaticProps({
     return { props: { error: orderError } };
   }
 
-  const analysis_id = orderData.analysis_id;
-  const { data: analysisData, error: analysisError } = await supabase
-    .from("analysis")
-    .select("*")
-    .eq("id", analysis_id)
-    .single();
-
-  if (!analysisData) return { props: { order: orderData } };
-
-  if (analysisError) {
-    return { props: { error: analysisError } };
-  }
-
   return {
     props: {
       order: orderData,
-      analysis: analysisData,
     }, // will be passed to the page component as props
   };
 }
