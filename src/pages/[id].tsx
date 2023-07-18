@@ -110,6 +110,10 @@ export async function getStaticProps({
     };
   }
 
+  // if (moleculesError) {
+  //   return { props: { error: moleculesError } };
+  // }
+
   return {
     props: {
       stage: STAGE.COMPLETE,
@@ -136,10 +140,10 @@ export async function getStaticPaths() {
 
   console.log(slugs);
 
-  const paths = slugs.map((id) => ({ params: { id } }));
+  const myPaths = slugs.map((id) => ({ params: { id } }));
 
   return {
-    paths,
+    paths: myPaths,
     fallback: false, // or 'blocking' for on-demand SSR
   };
 }
