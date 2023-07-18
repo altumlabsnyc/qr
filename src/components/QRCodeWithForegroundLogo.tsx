@@ -47,6 +47,7 @@ const QRCodeWithForegroundLogo: React.FC<QRCodeWithLogoProps> = ({
           },
         });
 
+        // @ts-ignore
         qrCode.append(qrCodeRef.current);
       })
       .catch((err) => {
