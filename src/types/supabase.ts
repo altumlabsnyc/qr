@@ -11,21 +11,18 @@ export interface Database {
     Tables: {
       analysis: {
         Row: {
-          accepted: boolean
           finished_at: string
           id: string
           run_id: string
           started_at: string | null
         }
         Insert: {
-          accepted?: boolean
           finished_at?: string
           id?: string
           run_id: string
           started_at?: string | null
         }
         Update: {
-          accepted?: boolean
           finished_at?: string
           id?: string
           run_id?: string
@@ -227,24 +224,34 @@ export interface Database {
       }
       lab_order: {
         Row: {
+          analysis_id: string | null
           id: string
           location: string | null
           pickup_date: string | null
           strain_info: string | null
         }
         Insert: {
+          analysis_id?: string | null
           id?: string
           location?: string | null
           pickup_date?: string | null
           strain_info?: string | null
         }
         Update: {
+          analysis_id?: string | null
           id?: string
           location?: string | null
           pickup_date?: string | null
           strain_info?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "lab_order_analysis_id_fkey"
+            columns: ["analysis_id"]
+            referencedRelation: "analysis"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       lab_user: {
         Row: {

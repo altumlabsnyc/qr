@@ -1,30 +1,46 @@
 import "@/app/globals.css";
-import OrderDisplay, { OrderDisplayProps } from "@/components/OrderDisplay";
-import { OrderData } from "@/types/OrderData";
+import { PredictedMolecule } from "@/types/PredictedMolecule";
+import { STAGE } from "@/types/Stage";
 import { supabase } from "@/utils/supabase";
 
-export default function LabOrder({ order, error }: OrderDisplayProps) {
-  return <OrderDisplay order={order} error={error} />;
+interface Props {
+  stage: STAGE;
+  error?: any;
+  predicted_molecules?: PredictedMolecule[];
+}
+
+export default function LabOrder({ stage, error }: Props) {
+  if (error) {
+    return (
+      <div>
+        <h1 className="text-red-400">an error has occured</h1>
+        <p>{JSON.stringify(error)}</p>
+        <p>please contact altum labs for help</p>
+      </div>
+    );
+  }
+  // return <OrderDisplay order={order} error={error} />;
 }
 
 export async function getStaticProps({
   params,
 }: {
   params: { id: string };
-}): Promise<{ props: OrderDisplayProps }> {
+}): Promise<{ props: Props }> {
+  // get id from route of url
   const { id } = params;
 
+  // fetch raw data from backend. we know this order exists, or else it would
+  // never be prerendered.
   const { data, error: orderError } = await supabase
     .from("lab_order")
     .select(
       `
       *,
-      lot ( *,
-        samples:sample ( *, 
-          runs:run ( *,
-            analyses:analysis ( *,
-              molecule_predictions:molecule_prediction ( * )
-            )
+      analysis ( *,
+        run ( *, 
+          sample ( *,
+            lot ( * )
           )
         )
       )
@@ -33,23 +49,73 @@ export async function getStaticProps({
     .eq("id", id)
     .single();
 
-  const orderData = {
-    ...data,
-    lot: data?.lot[0],
-  } as OrderData | null;
-  console.log("orderData", orderData);
-  console.log("orderError", orderError);
-
-  if (!orderData) return { props: {} };
+  console.log(data);
 
   if (orderError) {
-    return { props: { error: orderError } };
+    return {
+      props: {
+        stage: STAGE.LAB,
+        error: orderError,
+      },
+    };
+  }
+
+  if (!data?.analysis) {
+    return { props: { stage: STAGE.LAB } };
+  }
+
+  // get predicted molecules from analysis
+  const analysis = data.analysis;
+  const { data: predicted_molecules, error: predicted_molecule_error } =
+    await supabase
+      .from("molecule_prediction")
+      .select(
+        `
+        *,
+        molecule (*)`
+      )
+      .eq("analysis_id", analysis.id);
+
+  console.log(predicted_molecules);
+
+  if (predicted_molecule_error) {
+    return {
+      props: {
+        stage: STAGE.ANALYSIS,
+        error: predicted_molecule_error,
+      },
+    };
+  }
+
+  if (!predicted_molecules) {
+    return {
+      props: {
+        stage: STAGE.ANALYSIS,
+      },
+    };
+  }
+
+  const molecules = predicted_molecules.map((predicted_molecule) => ({
+    temperature: predicted_molecule.temperature,
+    concentration: predicted_molecule.concentration,
+    ...predicted_molecule.molecule,
+  }));
+
+  if (!molecules) {
+    return {
+      props: {
+        stage: STAGE.ANALYSIS,
+        error: "Molecule data not found",
+      },
+    };
   }
 
   return {
     props: {
-      order: orderData,
-    }, // will be passed to the page component as props
+      stage: STAGE.COMPLETE,
+      // @ts-ignore
+      predicted_molecules: molecules,
+    },
   };
 }
 
