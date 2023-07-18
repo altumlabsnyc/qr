@@ -46,7 +46,7 @@ export default function OrderDisplay({ order, error }: OrderDisplayProps) {
 
   return (
     <div>
-      <h1>Order ID: {order.id}</h1>
+      <h1>Producer Name: some cool brand</h1>
       <p>Pickup date: {order.pickup_date}</p>
       <h2>Analysis: {chosenAnalysis.id}</h2>
       <p>Analysis start time: {chosenAnalysis.started_at}</p>
