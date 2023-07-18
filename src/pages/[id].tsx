@@ -1,78 +1,46 @@
-import OrderDisplay, { OrderDisplayProps } from "@/components/OrderDisplay";
-import UIComponent from "@/components/TestDisplay";
-import { OrderData } from "@/types/OrderData";
+import "@/app/globals.css";
+import { PredictedMolecule } from "@/types/PredictedMolecule";
+import { STAGE } from "@/types/Stage";
 import { supabase } from "@/utils/supabase";
 
-export default function LabOrder({ order, error }: OrderDisplayProps) {
+interface Props {
+  stage: STAGE;
+  error?: any;
+  predicted_molecules?: PredictedMolecule[];
+}
+
+export default function LabOrder({ stage, error }: Props) {
+  if (error) {
+    return (
+      <div>
+        <h1 className="text-red-400">an error has occured</h1>
+        <p>{JSON.stringify(error)}</p>
+        <p>please contact altum labs for help</p>
+      </div>
+    );
+  }
   // return <OrderDisplay order={order} error={error} />;
-
-  const producerInfo = {
-    legal_name: "ABC Pharmaceuticals",
-    common_name: "ABC Pharma",
-    primary_facility_address: "123 Main St, City",
-    billing_address: "456 Elm St, City",
-    license_type: "Pharmaceutical License",
-    license_number: "ABC123",
-    contact_phone: "123-456-7890",
-  };
-
-  const brandName = "ABC Brand";
-
-  const labOrderInfo = {
-    strain_info: "Strain XYZ",
-    location: "Lab Location",
-    pickup_date: "2023-07-19",
-  };
-
-  const moleculeInfo = {
-    temperature: 25,
-    concentration: 0.1,
-    name: "Molecule ABC",
-    common_name: "ABC Molecule",
-    molecular_weight: 100.0,
-    spec_energy: 2.5,
-    m_z: 123.45,
-    standard_intensity: 0.8,
-    retention_time: 5.6,
-    melting_point: 50.0,
-    boiling_point: 100.0,
-    smiles: "CC(=O)OC1=CC=CC=C1C(=O)O",
-    chromatography_type: "HPLC",
-    molecule_type: "Organic",
-    spectrum: "UV-Vis",
-  };
-
-  return (
-    <div>
-      <h1>UI Example</h1>
-      <UIComponent
-        producerInfo={producerInfo}
-        brandName={brandName}
-        labOrderInfo={labOrderInfo}
-        moleculeInfo={moleculeInfo}
-      />
-    </div>
-  );
 }
 
 export async function getStaticProps({
   params,
 }: {
   params: { id: string };
-}): Promise<{ props: OrderDisplayProps }> {
+}): Promise<{ props: Props }> {
+  // get id from route of url
   const { id } = params;
 
+  // fetch raw data from backend. we know this order exists, or else it would
+  // never be prerendered.
   const { data, error: orderError } = await supabase
     .from("lab_order")
     .select(
       `
       *,
-      lot ( *,
-        samples:sample ( *, 
-          runs:run ( *,
-            analyses:analysis ( *,
-              molecule_predictions:molecule_prediction ( * )
-            )
+      analysis ( *,
+        run ( *, 
+          sample ( *,
+            lot ( * )
           )
         )
       )
@@ -81,42 +49,65 @@ export async function getStaticProps({
     .eq("id", id)
     .single();
 
-  // const analyses = data?.lot?.flatMap((lot) =>
-  //   lot.samples.flatMap((sample) => sample.runs.flatMap((run) => run.analyses))
-  // )!;
-
-  // Extract molecule_ids from the molecule_predictions
-  const moleculeIds = data?.lot?.flatMap((lot) =>
-    lot.samples.flatMap((sample) =>
-      sample.runs.flatMap((run) =>
-        run.analyses.flatMap((analysis) =>
-          analysis.molecule_predictions.map(
-            (molecule_prediction) => molecule_prediction.molecule_id
-          )
-        )
-      )
-    )
-  )!; // non-null assertion
-
-  // Fetch corresponding molecules
-  // const { data: moleculesData, error: moleculesError } = await supabase
-  //   .from("molecule")
-  //   .select("*")
-  //   .in("id", moleculeIds);
-
-  const orderData = {
-    ...data,
-    lot: data?.lot[0],
-    // molecules: moleculesData,
-  } as OrderData | null;
-
-  console.log("orderData", orderData);
-  console.log("orderError", orderError);
-
-  if (!orderData) return { props: {} };
+  console.log(data);
 
   if (orderError) {
-    return { props: { error: orderError } };
+    return {
+      props: {
+        stage: STAGE.LAB,
+        error: orderError,
+      },
+    };
+  }
+
+  if (!data?.analysis) {
+    return { props: { stage: STAGE.LAB } };
+  }
+
+  // get predicted molecules from analysis
+  const analysis = data.analysis;
+  const { data: predicted_molecules, error: predicted_molecule_error } =
+    await supabase
+      .from("molecule_prediction")
+      .select(
+        `
+        *,
+        molecule (*)`
+      )
+      .eq("analysis_id", analysis.id);
+
+  console.log(predicted_molecules);
+
+  if (predicted_molecule_error) {
+    return {
+      props: {
+        stage: STAGE.ANALYSIS,
+        error: predicted_molecule_error,
+      },
+    };
+  }
+
+  if (!predicted_molecules) {
+    return {
+      props: {
+        stage: STAGE.ANALYSIS,
+      },
+    };
+  }
+
+  const molecules = predicted_molecules.map((predicted_molecule) => ({
+    temperature: predicted_molecule.temperature,
+    concentration: predicted_molecule.concentration,
+    ...predicted_molecule.molecule,
+  }));
+
+  if (!molecules) {
+    return {
+      props: {
+        stage: STAGE.ANALYSIS,
+        error: "Molecule data not found",
+      },
+    };
   }
 
   // if (moleculesError) {
@@ -125,8 +116,10 @@ export async function getStaticProps({
 
   return {
     props: {
-      order: orderData,
-    }, // will be passed to the page component as props
+      stage: STAGE.COMPLETE,
+      // @ts-ignore
+      predicted_molecules: molecules,
+    },
   };
 }
 
