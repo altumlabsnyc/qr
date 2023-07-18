@@ -1,25 +1,61 @@
 import "@/app/globals.css";
-import { PredictedMolecule } from "@/types/PredictedMolecule";
+import GeneralError from "@/components/Errors/GeneralError";
+import RedFlagError from "@/components/Errors/RedFlagError";
+import AnalysisStageDisplay from "@/components/StageDisplays/AnalysisStageDisplay";
+import CompleteStageDisplay from "@/components/StageDisplays/CompleteStageDisplay";
+import LabStageDisplay from "@/components/StageDisplays/LabStageDisplay";
+import { LabOrder, Metadata, PredictedMolecule } from "@/types/DisplayTypes";
 import { STAGE } from "@/types/Stage";
 import { supabase } from "@/utils/supabase";
 
 interface Props {
   stage: STAGE;
   error?: any;
+  metadata?: Metadata;
+  lab_order?: LabOrder;
   predicted_molecules?: PredictedMolecule[];
 }
 
-export default function LabOrder({ stage, error }: Props) {
+// this component acts as a switch to control what is rendered
+export default function LabOrder({
+  stage,
+  error,
+  metadata,
+  lab_order,
+  predicted_molecules,
+}: Props) {
   if (error) {
+    return <GeneralError error={error} />;
+  }
+
+  if (!metadata) {
+    return <RedFlagError />;
+  }
+
+  if (stage === STAGE.LAB && lab_order !== undefined) {
+    return <LabStageDisplay metadata={metadata} lab_order={lab_order} />;
+  }
+
+  if (stage === STAGE.ANALYSIS && lab_order !== undefined) {
+    return <AnalysisStageDisplay metadata={metadata} lab_order={lab_order} />;
+  }
+
+  if (
+    stage === STAGE.COMPLETE &&
+    lab_order !== undefined &&
+    predicted_molecules !== undefined
+  ) {
     return (
-      <div>
-        <h1 className="text-red-400">an error has occured</h1>
-        <p>{JSON.stringify(error)}</p>
-        <p>please contact altum labs for help</p>
-      </div>
+      <CompleteStageDisplay
+        metadata={metadata}
+        lab_order={lab_order}
+        predicted_molecules={predicted_molecules}
+      />
     );
   }
-  // return <OrderDisplay order={order} error={error} />;
+
+  // something with the switch failed, throw a general error
+  return <RedFlagError />;
 }
 
 export async function getStaticProps({
@@ -40,7 +76,13 @@ export async function getStaticProps({
       analysis ( *,
         run ( *, 
           sample ( *,
-            lot ( * )
+            lot ( *,
+              batch ( *, 
+                brand ( *,
+                  producer:producer_user ( * )
+                )
+              )  
+            )
           )
         )
       )
@@ -60,8 +102,31 @@ export async function getStaticProps({
     };
   }
 
+  // attempt to get brand info. this only works if the
+  // producer -> brand -> batch -> lot -> sample -> run -> analysis
+  // relationship is maintained
+  const lot = data.analysis?.run?.sample?.lot || null;
+  const batch = lot?.batch || null;
+  const brand = batch?.brand || null;
+  const producer = brand?.producer || null;
+
+  const metadata = {
+    lot: lot,
+    batch: batch,
+    brand: brand,
+    producer: producer,
+  } as Metadata;
+
+  console.log(metadata);
+
   if (!data?.analysis) {
-    return { props: { stage: STAGE.LAB } };
+    return {
+      props: {
+        stage: STAGE.LAB,
+        metadata: metadata,
+        lab_order: data as LabOrder,
+      },
+    };
   }
 
   // get predicted molecules from analysis
@@ -91,6 +156,8 @@ export async function getStaticProps({
     return {
       props: {
         stage: STAGE.ANALYSIS,
+        metadata: metadata,
+        lab_order: data as LabOrder,
       },
     };
   }
@@ -117,6 +184,8 @@ export async function getStaticProps({
   return {
     props: {
       stage: STAGE.COMPLETE,
+      metadata: metadata,
+      lab_order: data as LabOrder,
       // @ts-ignore
       predicted_molecules: molecules,
     },
