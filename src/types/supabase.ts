@@ -13,18 +13,21 @@ export interface Database {
         Row: {
           finished_at: string
           id: string
+          regulator_approved: boolean
           run_id: string
           started_at: string | null
         }
         Insert: {
           finished_at?: string
           id?: string
+          regulator_approved?: boolean
           run_id: string
           started_at?: string | null
         }
         Update: {
           finished_at?: string
           id?: string
+          regulator_approved?: boolean
           run_id?: string
           started_at?: string | null
         }
@@ -73,33 +76,24 @@ export interface Database {
       }
       brand: {
         Row: {
-          facility_id: string | null
           id: string
           image_path: string | null
           name: string
           producer_user_id: string
         }
         Insert: {
-          facility_id?: string | null
           id?: string
           image_path?: string | null
           name: string
           producer_user_id: string
         }
         Update: {
-          facility_id?: string | null
           id?: string
           image_path?: string | null
           name?: string
           producer_user_id?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "brand_facility_id_fkey"
-            columns: ["facility_id"]
-            referencedRelation: "facility"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "brand_producer_user_id_fkey"
             columns: ["producer_user_id"]

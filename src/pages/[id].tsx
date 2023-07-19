@@ -1,6 +1,7 @@
 import "@/app/globals.css";
 import GeneralError from "@/components/Errors/GeneralError";
 import RedFlagError from "@/components/Errors/RedFlagError";
+import Footer from "@/components/Footer";
 import AnalysisStageDisplay from "@/components/StageDisplays/AnalysisStageDisplay";
 import CompleteStageDisplay from "@/components/StageDisplays/CompleteStageDisplay";
 import LabStageDisplay from "@/components/StageDisplays/LabStageDisplay";
@@ -25,7 +26,12 @@ export default function LabOrder({
   predicted_molecules,
 }: Props) {
   if (error) {
-    return <GeneralError error={error} />;
+    return (
+      <>
+        <GeneralError error={error} />
+        <Footer />
+      </>
+    );
   }
 
   if (stage === STAGE.LAB && lab_order !== undefined) {
@@ -95,6 +101,13 @@ export async function getStaticProps({
       props: {
         stage: STAGE.LAB,
         error: orderError,
+        metadata: {
+          batch: null,
+          brand: null,
+          producer: null,
+          facility: null,
+          approved: false,
+        },
       },
     };
   }
@@ -114,6 +127,7 @@ export async function getStaticProps({
     brand: brand,
     producer: producer,
     facility: facility,
+    approved: data.analysis?.regulator_approved || false,
   } as Metadata;
 
   // console.log(producer?.facility);

@@ -14,6 +14,7 @@ export interface Metadata {
   brand: Brand | null;
   producer: Producer | null;
   facility: Facility | null;
+  approved: boolean;
 }
 
 export type PredictedMolecule = {

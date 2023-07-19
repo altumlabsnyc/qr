@@ -1,5 +1,6 @@
 import { LabOrder, Metadata, PredictedMolecule } from "@/types/DisplayTypes";
 import { useState } from "react";
+import Footer from "../Footer";
 import MoleculePopup from "../MoleculePopup";
 import ProductInfo from "../ProductInfo";
 import QRCodeWithForegroundLogo from "../QRCodeWithForegroundLogo";
@@ -36,6 +37,7 @@ export default function OrderDisplay({
           logoSrc="/logoThick.svg"
         /> */}
       </div>
+      <p></p>
       {predicted_molecules.map((predicted_molecule) => (
         <div>
           {/* <p>Temperature: {predicted_molecule.temperature}</p> */}
@@ -59,6 +61,7 @@ export default function OrderDisplay({
           {/* <p>Spectrum: {predicted_molecule.spectrum}</p> */}
         </div>
       ))}
+      <Footer />
     </div>
   );
 }
