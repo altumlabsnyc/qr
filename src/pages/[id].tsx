@@ -160,6 +160,7 @@ export async function getStaticProps({
     return {
       props: {
         stage: STAGE.ANALYSIS,
+        metadata: metadata,
         error: predicted_molecule_error,
       },
     };
@@ -185,6 +186,7 @@ export async function getStaticProps({
     return {
       props: {
         stage: STAGE.ANALYSIS,
+        metadata: metadata,
         error: "Molecule data not found",
       },
     };
