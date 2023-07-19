@@ -150,11 +150,13 @@ export async function getStaticProps({
       .select(
         `
         *,
-        molecule (*)`
+        molecule (*, 
+          molecule_wiki ( * )
+        )`
       )
       .eq("analysis_id", analysis.id);
 
-  // console.log(predicted_molecules);
+  console.log(predicted_molecules);
 
   if (predicted_molecule_error) {
     return {

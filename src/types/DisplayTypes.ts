@@ -7,6 +7,7 @@ export type Batch = Database["public"]["Tables"]["batch"]["Row"];
 export type Brand = Database["public"]["Tables"]["brand"]["Row"];
 export type Producer = Database["public"]["Tables"]["producer_user"]["Row"];
 export type Facility = Database["public"]["Tables"]["facility"]["Row"];
+export type MoleculeWiki = Database["public"]["Tables"]["molecule_wiki"]["Row"];
 
 export interface Metadata {
   // lot: Lot | null;
@@ -20,4 +21,5 @@ export interface Metadata {
 export type PredictedMolecule = {
   temperature: number | null;
   concentration: number | null;
+  molecule_wiki: MoleculeWiki | null;
 } & Database["public"]["Tables"]["molecule"]["Row"];

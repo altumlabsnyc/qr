@@ -330,6 +330,7 @@ export interface Database {
           "m/z": number | null
           melting_point: number | null
           molecular_weight: number | null
+          molecule_wiki_id: string | null
           name: string | null
           retention_time: number | null
           smiles: string | null
@@ -349,6 +350,7 @@ export interface Database {
           "m/z"?: number | null
           melting_point?: number | null
           molecular_weight?: number | null
+          molecule_wiki_id?: string | null
           name?: string | null
           retention_time?: number | null
           smiles?: string | null
@@ -368,6 +370,7 @@ export interface Database {
           "m/z"?: number | null
           melting_point?: number | null
           molecular_weight?: number | null
+          molecule_wiki_id?: string | null
           name?: string | null
           retention_time?: number | null
           smiles?: string | null
@@ -376,7 +379,14 @@ export interface Database {
           standard_intensity?: number | null
           type?: Database["public"]["Enums"]["molecule_type"] | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "molecule_molecule_wiki_id_fkey"
+            columns: ["molecule_wiki_id"]
+            referencedRelation: "molecule_wiki"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       molecule_on_effect: {
         Row: {
@@ -442,6 +452,24 @@ export interface Database {
             referencedColumns: ["id"]
           }
         ]
+      }
+      molecule_wiki: {
+        Row: {
+          id: string
+          legal_limit: number | null
+          state: string | null
+        }
+        Insert: {
+          id?: string
+          legal_limit?: number | null
+          state?: string | null
+        }
+        Update: {
+          id?: string
+          legal_limit?: number | null
+          state?: string | null
+        }
+        Relationships: []
       }
       plant: {
         Row: {
