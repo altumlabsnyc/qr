@@ -75,18 +75,21 @@ export interface Database {
         Row: {
           facility_id: string | null
           id: string
+          image_path: string | null
           name: string
           producer_user_id: string
         }
         Insert: {
           facility_id?: string | null
           id?: string
+          image_path?: string | null
           name: string
           producer_user_id: string
         }
         Update: {
           facility_id?: string | null
           id?: string
+          image_path?: string | null
           name?: string
           producer_user_id?: string
         }

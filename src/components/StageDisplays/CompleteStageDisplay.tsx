@@ -1,4 +1,5 @@
 import { LabOrder, Metadata, PredictedMolecule } from "@/types/DisplayTypes";
+import ProductInfo from "../ProductInfo";
 import QRCodeWithForegroundLogo from "../QRCodeWithForegroundLogo";
 
 export interface OrderDisplayProps {
@@ -8,11 +9,13 @@ export interface OrderDisplayProps {
 }
 
 export default function OrderDisplay({
+  metadata,
   lab_order,
   predicted_molecules,
 }: OrderDisplayProps) {
   return (
-    <div className="flex flex-col items-center">
+    <div className="prose max-w-none text-center leading-normal flex flex-col items-center">
+      <ProductInfo metadata={metadata} lab_order={lab_order} />
       <div className="flex gap-8 ">
         <QRCodeWithForegroundLogo
           text={`https://qr.plantalysis.com/${lab_order.id}`}

@@ -10,8 +10,8 @@ import { supabase } from "@/utils/supabase";
 
 interface Props {
   stage: STAGE;
+  metadata: Metadata;
   error?: any;
-  metadata?: Metadata;
   lab_order?: LabOrder;
   predicted_molecules?: PredictedMolecule[];
 }
@@ -26,10 +26,6 @@ export default function LabOrder({
 }: Props) {
   if (error) {
     return <GeneralError error={error} />;
-  }
-
-  if (!metadata) {
-    return <RedFlagError />;
   }
 
   if (stage === STAGE.LAB && lab_order !== undefined) {
@@ -80,7 +76,8 @@ export async function getStaticProps({
               batch ( *, 
                 brand ( *,
                   producer:producer_user ( * )
-                )
+                ),
+                facility ( * )
               )  
             )
           )
@@ -91,7 +88,7 @@ export async function getStaticProps({
     .eq("id", id)
     .single();
 
-  console.log(data);
+  // console.log(data?.analysis?.run?.sample?.lot?.batch?.brand);
 
   if (orderError) {
     return {
@@ -108,6 +105,7 @@ export async function getStaticProps({
   const lot = data.analysis?.run?.sample?.lot || null;
   const batch = lot?.batch || null;
   const brand = batch?.brand || null;
+  const facility = batch?.facility || null;
   const producer = brand?.producer || null;
 
   const metadata = {
@@ -115,9 +113,10 @@ export async function getStaticProps({
     batch: batch,
     brand: brand,
     producer: producer,
+    facility: facility,
   } as Metadata;
 
-  console.log(metadata);
+  // console.log(producer?.facility);
 
   if (!data?.analysis) {
     return {
@@ -141,7 +140,7 @@ export async function getStaticProps({
       )
       .eq("analysis_id", analysis.id);
 
-  console.log(predicted_molecules);
+  // console.log(predicted_molecules);
 
   if (predicted_molecule_error) {
     return {
