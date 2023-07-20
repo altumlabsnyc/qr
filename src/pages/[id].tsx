@@ -3,7 +3,7 @@ import GeneralError from "@/components/Errors/GeneralError";
 import RedFlagError from "@/components/Errors/RedFlagError";
 import Footer from "@/components/Footer";
 import AnalysisStageDisplay from "@/components/StageDisplays/AnalysisStageDisplay";
-import CompleteStageDisplay from "@/components/StageDisplays/CompleteStageDisplay";
+import { default as CompleteStageDisplay } from "@/components/StageDisplays/CompleteStageDisplay";
 import LabStageDisplay from "@/components/StageDisplays/LabStageDisplay";
 import { LabOrder, Metadata, PredictedMolecule } from "@/types/DisplayTypes";
 import { STAGE } from "@/types/Stage";
@@ -70,29 +70,31 @@ export async function getStaticProps({
 
   // fetch raw data from backend. we know this order exists, or else it would
   // never be prerendered.
-  const { data, error: orderError } = await supabase
+  const { data: labOrder, error: orderError } = await supabase
     .from("lab_order")
     .select(
       `
       *,
-      analysis ( *,
-        run ( *, 
-          sample ( *,
-            lot ( *,
-              batch ( *, 
-                brand ( *,
-                  producer:producer_user ( * )
-                ),
-                facility ( * )
-              )  
-            )
+      analyses:analysis ( *,
+        predicted_molecules:molecule_prediction ( *,
+          molecule ( *,
+            molecule_wiki ( * )
           )
         )
-      )
+      ),
+      batch ( *, 
+        brand ( *,
+          producer:producer_user ( * )
+        ),
+        facility ( * )
+      ),
+      lab:lab_user ( * )
     `
     )
     .eq("id", id)
     .single();
+
+  console.log(labOrder);
 
   // console.log(data?.analysis?.run?.sample?.lot?.batch?.brand);
 
@@ -115,96 +117,68 @@ export async function getStaticProps({
   // attempt to get brand info. this only works if the
   // producer -> brand -> batch -> lot -> sample -> run -> analysis
   // relationship is maintained
-  const lot = data.analysis?.run?.sample?.lot || null;
-  const batch = lot?.batch || null;
+  const batch = labOrder?.batch || null;
   const brand = batch?.brand || null;
   const facility = batch?.facility || null;
   const producer = brand?.producer || null;
+  const analyses = labOrder.analyses || null;
+
+  // sort analyses by most recent
+  const analysesSorted = analyses.sort((a, b) => {
+    return a.finished_at > b.finished_at ? -1 : 1;
+  });
+
+  // pick the first analysis that is approved or go with the most recent
+  const analysis =
+    analysesSorted.find((analysis) => analysis.regulator_approved) ||
+    analysesSorted[0];
 
   const metadata = {
-    lot: lot,
     batch: batch,
     brand: brand,
     producer: producer,
     facility: facility,
-    approved: data.analysis?.regulator_approved || false,
+    approved: analysis?.regulator_approved || false,
   } as Metadata;
 
   // console.log(producer?.facility);
 
-  if (!data?.analysis) {
+  if (!analysis) {
     return {
       props: {
         stage: STAGE.LAB,
         metadata: metadata,
-        lab_order: data as LabOrder,
+        lab_order: labOrder as LabOrder,
       },
     };
   }
 
-  // get predicted molecules from analysis
-  const analysis = data.analysis;
-  const { data: predicted_molecules, error: predicted_molecule_error } =
-    await supabase
-      .from("molecule_prediction")
-      .select(
-        `
-        *,
-        molecule (*, 
-          molecule_wiki ( * )
-        )`
-      )
-      .eq("analysis_id", analysis.id);
-
-  console.log(predicted_molecules);
-
-  if (predicted_molecule_error) {
-    return {
-      props: {
-        stage: STAGE.ANALYSIS,
-        metadata: metadata,
-        error: predicted_molecule_error,
-      },
-    };
-  }
+  const predicted_molecules = analysis.predicted_molecules.map(
+    (predicted_molecule) => ({
+      temperature: predicted_molecule.temperature,
+      concentration: predicted_molecule.concentration,
+      molecule_wiki: predicted_molecule.molecule?.molecule_wiki || null,
+      ...predicted_molecule.molecule,
+    })
+  ) as PredictedMolecule[];
 
   if (!predicted_molecules) {
     return {
       props: {
         stage: STAGE.ANALYSIS,
         metadata: metadata,
-        lab_order: data as LabOrder,
+        lab_order: labOrder as LabOrder,
       },
     };
   }
-
-  const molecules = predicted_molecules.map((predicted_molecule) => ({
-    temperature: predicted_molecule.temperature,
-    concentration: predicted_molecule.concentration,
-    ...predicted_molecule.molecule,
-  }));
-
-  if (!molecules) {
-    return {
-      props: {
-        stage: STAGE.ANALYSIS,
-        metadata: metadata,
-        error: "Molecule data not found",
-      },
-    };
-  }
-
-  // if (moleculesError) {
-  //   return { props: { error: moleculesError } };
-  // }
 
   return {
     props: {
       stage: STAGE.COMPLETE,
       metadata: metadata,
-      lab_order: data as LabOrder,
+      lab_order: labOrder as LabOrder,
       // @ts-ignore
-      predicted_molecules: molecules,
+      predicted_molecules: predicted_molecules,
     },
   };
 }

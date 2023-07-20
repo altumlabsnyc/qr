@@ -11,31 +11,64 @@ export interface Database {
     Tables: {
       analysis: {
         Row: {
+          aerobic_bacteria: number | null
+          aflatoxins: number | null
+          aspergillus: boolean
+          e_coli: boolean
+          filth: number | null
           finished_at: string
+          foreign_material: number | null
           id: string
+          lab_order_id: string | null
+          moisture_content: number | null
+          ochratoxin_a: number | null
           regulator_approved: boolean
-          run_id: string
+          salmonella: boolean
           started_at: string | null
+          water_activity: number | null
+          yeast_mold: number | null
         }
         Insert: {
+          aerobic_bacteria?: number | null
+          aflatoxins?: number | null
+          aspergillus?: boolean
+          e_coli?: boolean
+          filth?: number | null
           finished_at?: string
+          foreign_material?: number | null
           id?: string
+          lab_order_id?: string | null
+          moisture_content?: number | null
+          ochratoxin_a?: number | null
           regulator_approved?: boolean
-          run_id: string
+          salmonella?: boolean
           started_at?: string | null
+          water_activity?: number | null
+          yeast_mold?: number | null
         }
         Update: {
+          aerobic_bacteria?: number | null
+          aflatoxins?: number | null
+          aspergillus?: boolean
+          e_coli?: boolean
+          filth?: number | null
           finished_at?: string
+          foreign_material?: number | null
           id?: string
+          lab_order_id?: string | null
+          moisture_content?: number | null
+          ochratoxin_a?: number | null
           regulator_approved?: boolean
-          run_id?: string
+          salmonella?: boolean
           started_at?: string | null
+          water_activity?: number | null
+          yeast_mold?: number | null
         }
         Relationships: [
           {
-            foreignKeyName: "analysis_run_id_fkey"
-            columns: ["run_id"]
-            referencedRelation: "run"
+            foreignKeyName: "analysis_lab_order_id_fkey"
+            columns: ["lab_order_id"]
+            referencedRelation: "lab_order"
             referencedColumns: ["id"]
           }
         ]
@@ -80,18 +113,21 @@ export interface Database {
           image_path: string | null
           name: string
           producer_user_id: string
+          serving_size: number | null
         }
         Insert: {
           id?: string
           image_path?: string | null
           name: string
           producer_user_id: string
+          serving_size?: number | null
         }
         Update: {
           id?: string
           image_path?: string | null
           name?: string
           producer_user_id?: string
+          serving_size?: number | null
         }
         Relationships: [
           {
@@ -221,31 +257,61 @@ export interface Database {
       }
       lab_order: {
         Row: {
-          analysis_id: string | null
+          batch_id: string | null
+          bio_id: string | null
+          gcfid_id: string | null
+          gcms_id: string | null
+          hplc_id: string | null
+          icpms_id: string | null
           id: string
+          lab_notes: string | null
+          lab_user_id: string | null
+          lcms_id: string | null
           location: string | null
           pickup_date: string | null
           strain_info: string | null
         }
         Insert: {
-          analysis_id?: string | null
+          batch_id?: string | null
+          bio_id?: string | null
+          gcfid_id?: string | null
+          gcms_id?: string | null
+          hplc_id?: string | null
+          icpms_id?: string | null
           id?: string
+          lab_notes?: string | null
+          lab_user_id?: string | null
+          lcms_id?: string | null
           location?: string | null
           pickup_date?: string | null
           strain_info?: string | null
         }
         Update: {
-          analysis_id?: string | null
+          batch_id?: string | null
+          bio_id?: string | null
+          gcfid_id?: string | null
+          gcms_id?: string | null
+          hplc_id?: string | null
+          icpms_id?: string | null
           id?: string
+          lab_notes?: string | null
+          lab_user_id?: string | null
+          lcms_id?: string | null
           location?: string | null
           pickup_date?: string | null
           strain_info?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "lab_order_analysis_id_fkey"
-            columns: ["analysis_id"]
-            referencedRelation: "analysis"
+            foreignKeyName: "lab_order_batch_id_fkey"
+            columns: ["batch_id"]
+            referencedRelation: "batch"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lab_order_lab_user_id_fkey"
+            columns: ["lab_user_id"]
+            referencedRelation: "lab_user"
             referencedColumns: ["id"]
           }
         ]
@@ -280,40 +346,6 @@ export interface Database {
             foreignKeyName: "lab_user_id_fkey"
             columns: ["id"]
             referencedRelation: "user"
-            referencedColumns: ["id"]
-          }
-        ]
-      }
-      lot: {
-        Row: {
-          batch_id: string | null
-          id: string
-          lab_order_id: string
-          lot_weight: number
-        }
-        Insert: {
-          batch_id?: string | null
-          id?: string
-          lab_order_id: string
-          lot_weight: number
-        }
-        Update: {
-          batch_id?: string | null
-          id?: string
-          lab_order_id?: string
-          lot_weight?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "lot_batch_id_fkey"
-            columns: ["batch_id"]
-            referencedRelation: "batch"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "lot_lab_order_id_fkey"
-            columns: ["lab_order_id"]
-            referencedRelation: "lab_order"
             referencedColumns: ["id"]
           }
         ]
@@ -749,92 +781,6 @@ export interface Database {
             foreignKeyName: "regulator_user_id_fkey"
             columns: ["id"]
             referencedRelation: "user"
-            referencedColumns: ["id"]
-          }
-        ]
-      }
-      run: {
-        Row: {
-          bio_id: string | null
-          gcfid_id: string | null
-          gcms_id: string | null
-          hplc_id: string | null
-          icpms_id: string | null
-          id: string
-          lcms_id: string | null
-          notes: string | null
-          sample_id: string | null
-        }
-        Insert: {
-          bio_id?: string | null
-          gcfid_id?: string | null
-          gcms_id?: string | null
-          hplc_id?: string | null
-          icpms_id?: string | null
-          id?: string
-          lcms_id?: string | null
-          notes?: string | null
-          sample_id?: string | null
-        }
-        Update: {
-          bio_id?: string | null
-          gcfid_id?: string | null
-          gcms_id?: string | null
-          hplc_id?: string | null
-          icpms_id?: string | null
-          id?: string
-          lcms_id?: string | null
-          notes?: string | null
-          sample_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "run_sample_id_fkey"
-            columns: ["sample_id"]
-            referencedRelation: "sample"
-            referencedColumns: ["id"]
-          }
-        ]
-      }
-      sample: {
-        Row: {
-          bio_id: string | null
-          gcfid_id: string | null
-          gcms_id: string | null
-          hplc_id: string | null
-          icmps_id: string | null
-          id: string
-          lcms_id: string | null
-          lot_id: string
-          weight: number
-        }
-        Insert: {
-          bio_id?: string | null
-          gcfid_id?: string | null
-          gcms_id?: string | null
-          hplc_id?: string | null
-          icmps_id?: string | null
-          id?: string
-          lcms_id?: string | null
-          lot_id: string
-          weight: number
-        }
-        Update: {
-          bio_id?: string | null
-          gcfid_id?: string | null
-          gcms_id?: string | null
-          hplc_id?: string | null
-          icmps_id?: string | null
-          id?: string
-          lcms_id?: string | null
-          lot_id?: string
-          weight?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "sample_lot_id_fkey"
-            columns: ["lot_id"]
-            referencedRelation: "lot"
             referencedColumns: ["id"]
           }
         ]
