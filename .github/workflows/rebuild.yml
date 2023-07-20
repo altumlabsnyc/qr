@@ -1,0 +1,19 @@
+name: Hourly Rebuild
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 * * * *'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Repo
+      uses: actions/checkout@v2
+    - name: Make a commit
+      run: |
+        date > TODAY
+        git config user.name BasiliskBot
+        git config user.email basilisk@altumlabs.co
+        git add TODAY
+        git commit -m "Daily rebuild"
+        git push
