@@ -22,11 +22,12 @@ export default function ProductInfo({ lab_order, metadata }: Props) {
       <h1>{metadata.brand?.name || "No brand specified"}</h1>
       <span>SKU: {lab_order.id}</span>
       <span>Batch id: {metadata.batch?.id || "No batch id specified"}</span>
-      {data.publicUrl.slice(-9) !== "undefined" ? (
+      {/* {data.publicUrl.slice(-9) !== "undefined" ? (
         <img src={data.publicUrl} alt="brand logo" className="w-36 h-36" />
       ) : (
         <p>No brand image specified</p>
-      )}
+      )} */}
+      <p>no images yet</p>
       <h3>Producer & Facility info</h3>
       <ul>
         <li>
