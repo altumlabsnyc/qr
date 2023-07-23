@@ -28,7 +28,7 @@ export default function ProductInfo({ lab_order, metadata }: Props) {
         <p>No brand image specified</p>
       )} */}
       <p>no images yet</p>
-      <h3>Producer & Facility info</h3>
+      <h2>Producer & Facility info</h2>
       <ul>
         <li>
           Producer:{" "}
