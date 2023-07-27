@@ -1,9 +1,9 @@
 import { LabOrder, Metadata, PredictedMolecule } from "@/types/DisplayTypes";
+import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
 import Head from "next/head";
 import { useState } from "react";
 import MoleculePopup from "../MoleculePopup";
 import ProductInfo from "../ProductInfo";
-import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
 
 export interface OrderDisplayProps {
   metadata: Metadata;
@@ -41,7 +41,7 @@ export default function OrderDisplay({
           <div className="grid grid-rows-3 grid-flow-col gap-4">
             <p className="row-span-3">
               {predicted_molecule.name}:{" "}
-              {predicted_molecule.concentration * 100}%
+              {(predicted_molecule.concentration || 0) * 100}%
             </p>
             <button
               className="row-span-3"

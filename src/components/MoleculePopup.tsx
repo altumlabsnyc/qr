@@ -1,8 +1,8 @@
 import { PredictedMolecule } from "@/types/DisplayTypes";
 import { Dialog, Transition } from "@headlessui/react";
-import { Fragment } from "react";
 import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
 import Link from "next/link";
+import { Fragment } from "react";
 
 interface Props {
   molecule: PredictedMolecule | null;
@@ -56,11 +56,10 @@ export default function MoleculePopup({ molecule, setMoleculeShown }: Props) {
                   className="text-lg font-bold leading-6 text-gray-900"
                 >
                   {molecule?.common_name} :{" "}
-                  {100 * (molecule?.concentration || 0)}%
-                  {molecule?.name}
+                  {100 * (molecule?.concentration || 0)}%{molecule?.name}
                 </Dialog.Title>
                 <Dialog.Description className="mt-2 font-bold">
-                  {100 * molecule?.concentration}%
+                  {100 * (molecule?.concentration || 0)}%
                 </Dialog.Description>
                 <p>
                   Wiki info goes here: a short paragraph of description. need to
