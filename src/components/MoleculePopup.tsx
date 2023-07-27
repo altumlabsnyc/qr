@@ -43,7 +43,8 @@ export default function MoleculePopup({ molecule, setMoleculeShown }: Props) {
                   as="h3"
                   className="text-lg font-medium leading-6 text-gray-900"
                 >
-                  {molecule?.common_name} : {molecule?.concentration}%
+                  {molecule?.common_name} :{" "}
+                  {100 * (molecule?.concentration || 0)}%
                 </Dialog.Title>
                 <p>type: {molecule?.type}</p>
                 <p>Wiki info goes here</p>
