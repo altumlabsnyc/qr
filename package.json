@@ -14,11 +14,15 @@
     "@headlessui/react": "^1.7.15",
     "@mui/icons-material": "^5.14.1",
     "@mui/material": "^5.14.1",
+    "@rdkit/rdkit": "^2023.3.2-1.0.0",
     "@supabase/supabase-js": "^2.26.0",
     "@types/node": "20.4.2",
     "@types/react": "18.2.15",
     "@types/react-dom": "18.2.7",
     "autoprefixer": "^10.4.14",
+    "classnames": "^2.3.2",
+    "copy-webpack-plugin": "^11.0.0",
+    "lodash": "^4.17.21",
     "next": "13.4.10",
     "postcss": "^8.4.26",
     "qr-code-styling": "^1.6.0-rc.1",
@@ -26,11 +30,14 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "tailwindcss": "^3.3.3",
-    "typescript": "5.1.6"
+    "typescript": "5.1.6",
+    "uuid": "^9.0.0",
+    "webpack": "^5.88.2"
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.9",
     "@types/qrcode": "^1.5.1",
+    "@types/uuid": "^9.0.2",
     "supabase": "^1.77.9"
   }
 }

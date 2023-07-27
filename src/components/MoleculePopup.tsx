@@ -1,15 +1,22 @@
-import { Metadata, PredictedMolecule } from "@/types/DisplayTypes";
-import { Dialog, Transition } from "@headlessui/react";
-import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
-import Link from "next/link";
-import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded";
-import { concentrationDisplay } from "./StageDisplays/CompleteStageDisplay";
-import { Fragment } from "react";
+import { Metadata, PredictedMolecule } from "@/types/DisplayTypes"
+import { Dialog, Transition } from "@headlessui/react"
+import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded"
+import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded"
+import dynamic from "next/dynamic.js"
+import Link from "next/link"
+import { Fragment } from "react"
+import { v4 as uuidv4 } from "uuid"
+import { concentrationDisplay } from "./StageDisplays/CompleteStageDisplay"
+
+const MoleculeStructure = dynamic(
+  () => import("@/components/MoleculeStructure"),
+  { ssr: false }
+)
 
 interface Props {
-  molecule: PredictedMolecule | null;
-  setMoleculeShown: (molecule: PredictedMolecule | null) => void;
-  metadata: Metadata;
+  molecule: PredictedMolecule | null
+  setMoleculeShown: (molecule: PredictedMolecule | null) => void
+  metadata: Metadata
 }
 
 export default function MoleculePopup({
@@ -18,7 +25,7 @@ export default function MoleculePopup({
   metadata,
 }: Props) {
   function closeModal() {
-    setMoleculeShown(null);
+    setMoleculeShown(null)
   }
 
   return (
@@ -62,8 +69,8 @@ export default function MoleculePopup({
                   as="h3"
                   className="text-lg font-bold leading-6 text-gray-900"
                 >
-                  {molecule?.common_name} :{" "}
-                  {100 * (molecule?.concentration || 0)}%{molecule?.name}
+                  {molecule?.common_name}:{" "}
+                  {100 * (molecule?.concentration || 0)}% {molecule?.name}
                 </Dialog.Title>
                 <Dialog.Description className="mt-1 mb-2 font-semibold text-sm">
                   {concentrationDisplay(molecule, metadata)}
@@ -72,7 +79,14 @@ export default function MoleculePopup({
                   {molecule?.molecule_wiki?.description ||
                     "Wiki information unavailable"}
                 </p>
-                <div className="mt-2">
+                <div className="flex flex-col items-center">
+                  <MoleculeStructure
+                    width={256}
+                    height={256}
+                    id={uuidv4()}
+                    structure={molecule?.smiles}
+                    svgMode={true}
+                  />
                   <p className="text-sm text-red-500">
                     d3.js graph of molecule data
                   </p>
@@ -81,7 +95,7 @@ export default function MoleculePopup({
                 <center>
                   <Link
                     href={`https://en.wikipedia.org/wiki/${molecule?.name}`}
-                    className="bg-transparent hover:bg-green-500 font-semibold hover:text-white py-3 px-10 border border-green-500 hover:border-transparent rounded-full"
+                    className="bg-transparent hover:bg-green-500 transition-all duration-300 font-semibold hover:text-white py-3 px-10 border border-green-500 hover:border-transparent rounded-full"
                   >
                     <span className="mr-2">Wikipedia</span>
                     <ArrowForwardRoundedIcon sx={{ fontSize: 20 }} />
@@ -93,5 +107,5 @@ export default function MoleculePopup({
         </div>
       </Dialog>
     </Transition>
-  );
+  )
 }

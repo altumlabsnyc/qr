@@ -1,16 +1,16 @@
-import { LabOrder, Metadata, PredictedMolecule } from "@/types/DisplayTypes";
-import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
-import Head from "next/head";
-import { useState } from "react";
-import MoleculePopup from "../MoleculePopup";
-import ProductInfo from "../ProductInfo";
-import GppGoodOutlinedIcon from "@mui/icons-material/GppGoodOutlined";
-import GppBadOutlinedIcon from "@mui/icons-material/GppBadOutlined";
+import { LabOrder, Metadata, PredictedMolecule } from "@/types/DisplayTypes"
+import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded"
+import GppBadOutlinedIcon from "@mui/icons-material/GppBadOutlined"
+import GppGoodOutlinedIcon from "@mui/icons-material/GppGoodOutlined"
+import Head from "next/head"
+import { useState } from "react"
+import MoleculePopup from "../MoleculePopup"
+import ProductInfo from "../ProductInfo"
 
 export interface OrderDisplayProps {
-  metadata: Metadata;
-  lab_order: LabOrder;
-  predicted_molecules: PredictedMolecule[];
+  metadata: Metadata
+  lab_order: LabOrder
+  predicted_molecules: PredictedMolecule[]
 }
 
 export function concentrationDisplay(
@@ -20,12 +20,12 @@ export function concentrationDisplay(
   if (molecule?.concentration && metadata.batch?.serving_size) {
     return (
       molecule?.concentration * metadata.batch?.serving_size +
-      "mg•" +
+      "mg • " +
       molecule?.concentration * 100 +
       "%"
-    );
+    )
   } else {
-    return "Concentration not available";
+    return "Concentration not available"
   }
 }
 
@@ -36,7 +36,7 @@ export default function OrderDisplay({
 }: OrderDisplayProps) {
   const [moleculeShown, setMoleculeShown] = useState<PredictedMolecule | null>(
     null
-  );
+  )
 
   return (
     <>
@@ -58,15 +58,17 @@ export default function OrderDisplay({
           <h2 className="mt-4 mb-2">Ingredients</h2>
           {predicted_molecules.map((predicted_molecule) => (
             <div
-              className="grid grid-cols-3 gap-2 items-center mb-8 mt-8"
+              key={predicted_molecule.id}
+              className="grid grid-cols-3 gap-2 items-center mb-8 mt-8 cursor-pointer"
               style={{ gridTemplateColumns: "auto 1fr auto" }}
+              onClick={() => setMoleculeShown(predicted_molecule)}
             >
               {metadata.approved ? (
                 <div>
-                  <div className="w-10 h-10 bg-green-500 rounded-full">
+                  <div className="w-10 h-10 bg-gradient-to-r from-green-400 via-green-400 to-green-500 rounded-full flex flex-col items-center justify-center">
                     <center>
                       <GppGoodOutlinedIcon
-                        className="mt-1 fill-white"
+                        className="fill-white"
                         fontSize="large"
                       />
                     </center>
@@ -74,7 +76,7 @@ export default function OrderDisplay({
                 </div>
               ) : (
                 <div className="pt-5">
-                  <div className="w-10 h-10 bg-red-500 rounded-full">
+                  <div className="w-10 h-10 bg-gradient-to-r from-red-400 via-red-400 to-red-500 rounded-full flex flex-col items-center justify-center">
                     <center>
                       <GppBadOutlinedIcon className="mt-1" fontSize="large" />
                     </center>
@@ -91,13 +93,11 @@ export default function OrderDisplay({
                   {concentrationDisplay(predicted_molecule, metadata)}
                 </div>
               </div>
-              <button onClick={() => setMoleculeShown(predicted_molecule)}>
-                <ArrowForwardIosRoundedIcon />
-              </button>
+              <ArrowForwardIosRoundedIcon />
             </div>
           ))}
         </div>
       </div>
     </>
-  );
+  )
 }

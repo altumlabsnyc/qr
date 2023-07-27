@@ -7,6 +7,9 @@ module.exports = {
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
+    animation: {
+      "spin-fast": "spin 0.3s linear infinite",
+    },
     extend: {
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
@@ -19,4 +22,4 @@ module.exports = {
     require("@tailwindcss/typography"),
     // ...
   ],
-};
+}

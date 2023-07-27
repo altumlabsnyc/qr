@@ -1,24 +1,24 @@
-import { LabOrder, Metadata } from "@/types/DisplayTypes";
-import GppGoodOutlinedIcon from "@mui/icons-material/GppGoodOutlined";
-import GppBadOutlinedIcon from "@mui/icons-material/GppBadOutlined";
+import { LabOrder, Metadata } from "@/types/DisplayTypes"
+import GppBadOutlinedIcon from "@mui/icons-material/GppBadOutlined"
+import GppGoodOutlinedIcon from "@mui/icons-material/GppGoodOutlined"
 
 interface Props {
-  lab_order: LabOrder;
-  metadata: Metadata;
+  lab_order: LabOrder
+  metadata: Metadata
 }
 
 function formatTimestampTZ(timestampTZ: string | null) {
   if (timestampTZ === null) {
-    return "No timestamp available";
+    return "No timestamp available"
   }
-  const date = new Date(timestampTZ);
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  const year = date.getFullYear();
-  const hour = String(date.getHours()).padStart(2, "0");
-  const minute = String(date.getMinutes()).padStart(2, "0");
+  const date = new Date(timestampTZ)
+  const month = String(date.getMonth() + 1).padStart(2, "0")
+  const day = String(date.getDate()).padStart(2, "0")
+  const year = date.getFullYear()
+  const hour = String(date.getHours()).padStart(2, "0")
+  const minute = String(date.getMinutes()).padStart(2, "0")
 
-  return `${month}/${day}/${year} ${hour}:${minute}`;
+  return `${month}/${day}/${year} ${hour}:${minute}`
 }
 
 /**
@@ -57,15 +57,17 @@ export default function ProductInfo({ lab_order, metadata }: Props) {
       </div>
       <div className="mt-8">
         {metadata.approved ? (
-          <div className="bg-green-500 text-white py-2 px-2 border border-green-500 hover:border-transparent rounded-full inline-block">
+          <div className="bg-gradient-to-r from-green-400 via-green-400 to-green-500 text-white py-2 px-2 rounded-full inline-block">
             <GppGoodOutlinedIcon className="mr-1" fontSize="large" />
-            <span className="font-semibold text-sm mr-1">PASSED </span>
-            <span className="mr-1">
+            <span className="font-bold text-sm mr-3 tracking-wider">
+              PASSED
+            </span>
+            <span className="mr-1 text-xs font-semibold tracking-wide">
               {formatTimestampTZ(metadata.decision_time)}
             </span>
           </div>
         ) : (
-          <div className="bg-red-500 font-semibold py-3 px-3 border border-red-500 hover:border-transparent rounded-full inline-block">
+          <div className="bg-gradient-to-r from-red-400 via-red-400 to-red-500 font-semibold py-3 px-3 rounded-full inline-block">
             <GppBadOutlinedIcon className="mr-1" />
             <span className="font-semibold">FAILED</span>
             {formatTimestampTZ(metadata.decision_time)}
@@ -73,5 +75,5 @@ export default function ProductInfo({ lab_order, metadata }: Props) {
         )}
       </div>
     </div>
-  );
+  )
 }
