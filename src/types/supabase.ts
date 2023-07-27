@@ -14,6 +14,7 @@ export interface Database {
           aerobic_bacteria: number | null
           aflatoxins: number | null
           aspergillus: boolean
+          decision_time: string | null
           e_coli: boolean
           filth: number | null
           finished_at: string
@@ -32,6 +33,7 @@ export interface Database {
           aerobic_bacteria?: number | null
           aflatoxins?: number | null
           aspergillus?: boolean
+          decision_time?: string | null
           e_coli?: boolean
           filth?: number | null
           finished_at?: string
@@ -50,6 +52,7 @@ export interface Database {
           aerobic_bacteria?: number | null
           aflatoxins?: number | null
           aspergillus?: boolean
+          decision_time?: string | null
           e_coli?: boolean
           filth?: number | null
           finished_at?: string
@@ -75,34 +78,46 @@ export interface Database {
       }
       batch: {
         Row: {
-          brand_id: string
           facility_id: string | null
           id: string
+          producer_user_id: string | null
+          product_type: Database["public"]["Enums"]["product_type_enum"] | null
+          serving_size: number | null
+          strain: string | null
+          unit_weight: number | null
           weight: number | null
         }
         Insert: {
-          brand_id: string
           facility_id?: string | null
           id?: string
+          producer_user_id?: string | null
+          product_type?: Database["public"]["Enums"]["product_type_enum"] | null
+          serving_size?: number | null
+          strain?: string | null
+          unit_weight?: number | null
           weight?: number | null
         }
         Update: {
-          brand_id?: string
           facility_id?: string | null
           id?: string
+          producer_user_id?: string | null
+          product_type?: Database["public"]["Enums"]["product_type_enum"] | null
+          serving_size?: number | null
+          strain?: string | null
+          unit_weight?: number | null
           weight?: number | null
         }
         Relationships: [
           {
-            foreignKeyName: "batch_brand_id_fkey"
-            columns: ["brand_id"]
-            referencedRelation: "brand"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "batch_facility_id_fkey"
             columns: ["facility_id"]
             referencedRelation: "facility"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "batch_producer_user_id_fkey"
+            columns: ["producer_user_id"]
+            referencedRelation: "producer_user"
             referencedColumns: ["id"]
           }
         ]
@@ -114,6 +129,7 @@ export interface Database {
           name: string
           producer_user_id: string
           serving_size: number | null
+          unit_weight: number | null
         }
         Insert: {
           id?: string
@@ -121,6 +137,7 @@ export interface Database {
           name: string
           producer_user_id: string
           serving_size?: number | null
+          unit_weight?: number | null
         }
         Update: {
           id?: string
@@ -128,6 +145,7 @@ export interface Database {
           name?: string
           producer_user_id?: string
           serving_size?: number | null
+          unit_weight?: number | null
         }
         Relationships: [
           {
@@ -258,48 +276,39 @@ export interface Database {
       lab_order: {
         Row: {
           batch_id: string | null
-          bio_id: string | null
-          gcfid_id: string | null
-          gcms_id: string | null
-          hplc_id: string | null
-          icpms_id: string | null
           id: string
           lab_notes: string | null
           lab_user_id: string | null
-          lcms_id: string | null
           location: string | null
+          order_time: string
           pickup_date: string | null
-          strain_info: string | null
+          turnaround_time:
+            | Database["public"]["Enums"]["turnaround_time_enum"]
+            | null
         }
         Insert: {
           batch_id?: string | null
-          bio_id?: string | null
-          gcfid_id?: string | null
-          gcms_id?: string | null
-          hplc_id?: string | null
-          icpms_id?: string | null
           id?: string
           lab_notes?: string | null
           lab_user_id?: string | null
-          lcms_id?: string | null
           location?: string | null
+          order_time?: string
           pickup_date?: string | null
-          strain_info?: string | null
+          turnaround_time?:
+            | Database["public"]["Enums"]["turnaround_time_enum"]
+            | null
         }
         Update: {
           batch_id?: string | null
-          bio_id?: string | null
-          gcfid_id?: string | null
-          gcms_id?: string | null
-          hplc_id?: string | null
-          icpms_id?: string | null
           id?: string
           lab_notes?: string | null
           lab_user_id?: string | null
-          lcms_id?: string | null
           location?: string | null
+          order_time?: string
           pickup_date?: string | null
-          strain_info?: string | null
+          turnaround_time?:
+            | Database["public"]["Enums"]["turnaround_time_enum"]
+            | null
         }
         Relationships: [
           {
@@ -487,16 +496,19 @@ export interface Database {
       }
       molecule_wiki: {
         Row: {
+          description: string | null
           id: string
           legal_limit: number | null
           state: string | null
         }
         Insert: {
+          description?: string | null
           id?: string
           legal_limit?: number | null
           state?: string | null
         }
         Update: {
+          description?: string | null
           id?: string
           legal_limit?: number | null
           state?: string | null
@@ -938,14 +950,9 @@ export interface Database {
         | "Solvents"
         | "Metals"
         | "Others"
+      product_type_enum: "flower" | "concentrate" | "edibles"
+      turnaround_time_enum: "48" | "96" | "168" | "336"
       user_type_enum:
-        | "consumer"
-        | "regulator"
-        | "lab"
-        | "producer"
-        | "university"
-        | "sampling_firm"
-      user_types:
         | "consumer"
         | "regulator"
         | "lab"

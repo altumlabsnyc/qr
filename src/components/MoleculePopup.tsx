@@ -1,15 +1,22 @@
-import { PredictedMolecule } from "@/types/DisplayTypes";
+import { Metadata, PredictedMolecule } from "@/types/DisplayTypes";
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment } from "react";
 import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
 import Link from "next/link";
+import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded";
+import { concentrationDisplay } from "./StageDisplays/CompleteStageDisplay";
 
 interface Props {
   molecule: PredictedMolecule | null;
   setMoleculeShown: (molecule: PredictedMolecule | null) => void;
+  metadata: Metadata;
 }
 
-export default function MoleculePopup({ molecule, setMoleculeShown }: Props) {
+export default function MoleculePopup({
+  molecule,
+  setMoleculeShown,
+  metadata,
+}: Props) {
   function closeModal() {
     setMoleculeShown(null);
   }
@@ -57,15 +64,15 @@ export default function MoleculePopup({ molecule, setMoleculeShown }: Props) {
                 >
                   {molecule?.name}
                 </Dialog.Title>
-                <Dialog.Description className="mt-2 font-bold">
-                  {100 * molecule?.concentration}%
+                <Dialog.Description className="mt-1 mb-2 font-semibold text-sm">
+                  {concentrationDisplay(molecule, metadata)}
                 </Dialog.Description>
-                <p>
-                  Wiki info goes here: a short paragraph of description. need to
-                  be populated in the database (TODO)
+                <p className="text-gray-500">
+                  {molecule?.molecule_wiki?.description ||
+                    "Wiki information unavailable"}
                 </p>
                 <div className="mt-2">
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-red-500">
                     d3.js graph of molecule data
                   </p>
                 </div>
@@ -75,7 +82,8 @@ export default function MoleculePopup({ molecule, setMoleculeShown }: Props) {
                     href={`https://en.wikipedia.org/wiki/${molecule?.name}`}
                     className="bg-transparent hover:bg-green-500 font-semibold hover:text-white py-3 px-10 border border-green-500 hover:border-transparent rounded-full"
                   >
-                    Wikipedia
+                    <span className="mr-2">Wikipedia</span>
+                    <ArrowForwardRoundedIcon sx={{ fontSize: 20 }} />
                   </Link>
                 </center>
               </Dialog.Panel>

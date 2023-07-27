@@ -83,10 +83,7 @@ export async function getStaticProps({
         )
       ),
       batch ( *, 
-        brand ( *,
-          producer:producer_user ( * )
-        ),
-        facility ( * )
+        producer:producer_user ( * )
       ),
       lab:lab_user ( * )
     `
@@ -94,7 +91,7 @@ export async function getStaticProps({
     .eq("id", id)
     .single();
 
-  console.log(labOrder);
+  // console.log(labOrder);
 
   if (orderError) {
     return {
@@ -103,11 +100,10 @@ export async function getStaticProps({
         error: orderError,
         metadata: {
           batch: null,
-          brand: null,
           producer: null,
-          facility: null,
           lab: null,
           approved: false,
+          decision_time: null,
         },
       },
     };
@@ -117,9 +113,7 @@ export async function getStaticProps({
   // producer -> brand -> batch -> lot -> sample -> run -> analysis
   // relationship is maintained
   const batch = labOrder?.batch || null;
-  const brand = batch?.brand || null;
-  const facility = batch?.facility || null;
-  const producer = brand?.producer || null;
+  const producer = batch?.producer || null;
   const analyses = labOrder?.analyses || null;
   const lab = labOrder?.lab || null;
 
@@ -135,14 +129,11 @@ export async function getStaticProps({
 
   const metadata = {
     batch: batch,
-    brand: brand,
     producer: producer,
-    facility: facility,
     lab: lab,
     approved: analysis?.regulator_approved || false,
+    decision_time: analysis?.decision_time || null,
   } as Metadata;
-
-  // console.log(producer?.facility);
 
   if (!analysis) {
     return {
@@ -156,7 +147,6 @@ export async function getStaticProps({
 
   const predicted_molecules = analysis.predicted_molecules.map(
     (predicted_molecule) => ({
-      temperature: predicted_molecule.temperature,
       concentration: predicted_molecule.concentration,
       molecule_wiki: predicted_molecule.molecule?.molecule_wiki || null,
       ...predicted_molecule.molecule,
