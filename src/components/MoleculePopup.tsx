@@ -1,10 +1,10 @@
 import { Metadata, PredictedMolecule } from "@/types/DisplayTypes";
 import { Dialog, Transition } from "@headlessui/react";
-import { Fragment } from "react";
 import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
 import Link from "next/link";
 import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded";
 import { concentrationDisplay } from "./StageDisplays/CompleteStageDisplay";
+import { Fragment } from "react";
 
 interface Props {
   molecule: PredictedMolecule | null;
@@ -62,7 +62,8 @@ export default function MoleculePopup({
                   as="h3"
                   className="text-lg font-bold leading-6 text-gray-900"
                 >
-                  {molecule?.name}
+                  {molecule?.common_name} :{" "}
+                  {100 * (molecule?.concentration || 0)}%{molecule?.name}
                 </Dialog.Title>
                 <Dialog.Description className="mt-1 mb-2 font-semibold text-sm">
                   {concentrationDisplay(molecule, metadata)}

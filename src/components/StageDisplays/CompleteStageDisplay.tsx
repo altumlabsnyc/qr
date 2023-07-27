@@ -1,9 +1,9 @@
 import { LabOrder, Metadata, PredictedMolecule } from "@/types/DisplayTypes";
+import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
 import Head from "next/head";
 import { useState } from "react";
 import MoleculePopup from "../MoleculePopup";
 import ProductInfo from "../ProductInfo";
-import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
 import GppGoodOutlinedIcon from "@mui/icons-material/GppGoodOutlined";
 import GppBadOutlinedIcon from "@mui/icons-material/GppBadOutlined";
 
