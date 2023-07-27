@@ -1,5 +1,4 @@
 import { LabOrder, Metadata } from "@/types/DisplayTypes";
-import { supabase } from "@/utils/supabase";
 
 interface Props {
   lab_order: LabOrder;
@@ -11,46 +10,46 @@ interface Props {
  * Displays information about the product.
  */
 export default function ProductInfo({ lab_order, metadata }: Props) {
-  const { data } = supabase.storage
-    .from("pictures")
-    .getPublicUrl(`brand/${metadata.brand?.image_path}`);
-
-  console.log(metadata.approved);
-
   return (
-    <div className="flex flex-col items-center">
-      <h1>{metadata.brand?.name || "No brand specified"}</h1>
-      <span>SKU: {lab_order.id}</span>
-      <span>Batch id: {metadata.batch?.id || "No batch id specified"}</span>
-      {/* {data.publicUrl.slice(-9) !== "undefined" ? (
-        <img src={data.publicUrl} alt="brand logo" className="w-36 h-36" />
-      ) : (
-        <p>No brand image specified</p>
-      )} */}
-      <p>no images yet</p>
-      <h2>Producer & Facility info</h2>
-      <ul>
-        <li>
-          Producer:{" "}
-          {metadata.producer?.common_name ||
-            "No producer common name specified"}
-        </li>
-        <li>
-          Producer Address:{" "}
-          {metadata.producer?.primary_facility_address ||
-            "No producer address specified"}
-        </li>
-        <li>
-          Producer License:{" "}
-          {`${metadata.producer?.license_type}: ${metadata.producer?.license_number}` ||
-            "No license"}
-        </li>
-        <li>
-          Facility: {metadata.facility?.name || "No facility name specified"} at{" "}
-          {metadata.facility?.location || "No facility location specified"}
-        </li>
-      </ul>
-      <p>Regulator approved: {metadata.approved.toString()}</p>
+    <div className="flex flex-col item-start text-left m-4">
+      <h2 className="m-4">PRODUCT NAME (TODO)</h2>
+      <div className="grid grid-rows-3 grid-flow-col gap-4">
+        <div className="row-span-3 -ml-4">
+          <ul className="list-none font-semibold">
+            <li>SKU </li>
+            <li>Lab: </li>
+            <li>Cultivator: </li>
+            <li>Brand: </li>
+            <li>Strain: </li>
+            <li>Unit Weight: </li>
+            <li>Serving Size: </li>
+          </ul>
+        </div>
+        <div className="row-span-3">
+          <ul className="list-none">
+            <li>#{lab_order.id || "No producer SKU specified"}</li>
+            <li>{metadata.lab?.lab_name || "No lab specified"}</li>
+            <li>
+              {metadata.producer?.common_name || "No cultivator specified"}
+            </li>
+            <li>{metadata.brand?.name || "No brand specified"}</li>
+            <li>{lab_order.strain_info}</li>
+            <li>{metadata.batch?.weight} g (TODO)</li>
+            <li>114514 mg (TODO)</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        {metadata.approved ? (
+          <button className="bg-green-500 font-semibold text-white py-3 px-20 border border-green-500 hover:border-transparent rounded-full">
+            PASSED
+          </button>
+        ) : (
+          <button className="bg-red-500 font-semibold py-3 px-20 border border-red-500 hover:border-transparent rounded-full">
+            NOT PASSED
+          </button>
+        )}
+      </div>
     </div>
   );
 }

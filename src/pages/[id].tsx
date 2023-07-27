@@ -96,8 +96,6 @@ export async function getStaticProps({
 
   console.log(labOrder);
 
-  // console.log(data?.analysis?.run?.sample?.lot?.batch?.brand);
-
   if (orderError) {
     return {
       props: {
@@ -108,6 +106,7 @@ export async function getStaticProps({
           brand: null,
           producer: null,
           facility: null,
+          lab: null,
           approved: false,
         },
       },
@@ -121,7 +120,8 @@ export async function getStaticProps({
   const brand = batch?.brand || null;
   const facility = batch?.facility || null;
   const producer = brand?.producer || null;
-  const analyses = labOrder.analyses || null;
+  const analyses = labOrder?.analyses || null;
+  const lab = labOrder?.lab || null;
 
   // sort analyses by most recent
   const analysesSorted = analyses.sort((a, b) => {
@@ -138,6 +138,7 @@ export async function getStaticProps({
     brand: brand,
     producer: producer,
     facility: facility,
+    lab: lab,
     approved: analysis?.regulator_approved || false,
   } as Metadata;
 
@@ -197,8 +198,6 @@ export async function getStaticPaths() {
   }
 
   const slugs = data.map(({ id }) => id.toString());
-
-  console.log(slugs);
 
   const myPaths = slugs.map((id) => ({ params: { id } }));
 
