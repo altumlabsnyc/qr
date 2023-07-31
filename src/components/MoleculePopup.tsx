@@ -1,22 +1,22 @@
-import { Metadata, PredictedMolecule } from "@/types/DisplayTypes"
-import { Dialog, Transition } from "@headlessui/react"
-import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded"
-import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded"
-import dynamic from "next/dynamic.js"
-import Link from "next/link"
-import { Fragment, useEffect, useState } from "react"
-import { v4 as uuidv4 } from "uuid"
-import { concentrationDisplay } from "./StageDisplays/CompleteStageDisplay"
+import { Metadata, PredictedMolecule } from "@/types/DisplayTypes";
+import { Dialog, Transition } from "@headlessui/react";
+import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
+import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded";
+import dynamic from "next/dynamic.js";
+import Link from "next/link";
+import { Fragment, useEffect, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
+import { concentrationDisplay } from "./StageDisplays/CompleteStageDisplay";
 
 const MoleculeStructure = dynamic(
   () => import("@/components/MoleculeStructure"),
   { ssr: false }
-)
+);
 
 interface Props {
-  molecule: PredictedMolecule | null
-  setMoleculeShown: (molecule: PredictedMolecule | null) => void
-  metadata: Metadata
+  molecule: PredictedMolecule | null;
+  setMoleculeShown: (molecule: PredictedMolecule | null) => void;
+  metadata: Metadata;
 }
 
 export default function MoleculePopup({
@@ -28,18 +28,18 @@ export default function MoleculePopup({
     typeof window !== "undefined"
       ? window.matchMedia("(prefers-color-scheme: dark)").matches
       : false
-  )
+  );
 
   useEffect(() => {
-    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)")
-    const changeHandler = () => setIsDarkMode(mediaQuery.matches)
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    const changeHandler = () => setIsDarkMode(mediaQuery.matches);
 
-    mediaQuery.addEventListener("change", changeHandler)
-    return () => mediaQuery.removeEventListener("change", changeHandler)
-  }, [])
+    mediaQuery.addEventListener("change", changeHandler);
+    return () => mediaQuery.removeEventListener("change", changeHandler);
+  }, []);
 
   function closeModal() {
-    setMoleculeShown(null)
+    setMoleculeShown(null);
   }
 
   return (
@@ -123,5 +123,5 @@ export default function MoleculePopup({
         </div>
       </Dialog>
     </Transition>
-  )
+  );
 }
