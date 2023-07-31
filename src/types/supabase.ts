@@ -9,6 +9,49 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
+      address: {
+        Row: {
+          city: string
+          country_id: string
+          id: string
+          line_1: string
+          line_2: string | null
+          postal_code: string
+          state_id: string
+        }
+        Insert: {
+          city: string
+          country_id: string
+          id?: string
+          line_1: string
+          line_2?: string | null
+          postal_code: string
+          state_id: string
+        }
+        Update: {
+          city?: string
+          country_id?: string
+          id?: string
+          line_1?: string
+          line_2?: string | null
+          postal_code?: string
+          state_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "address_country_id_fkey"
+            columns: ["country_id"]
+            referencedRelation: "country"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "address_state_id_fkey"
+            columns: ["state_id"]
+            referencedRelation: "state"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       analysis: {
         Row: {
           aerobic_bacteria: number | null
@@ -122,40 +165,6 @@ export interface Database {
           }
         ]
       }
-      brand: {
-        Row: {
-          id: string
-          image_path: string | null
-          name: string
-          producer_user_id: string
-          serving_size: number | null
-          unit_weight: number | null
-        }
-        Insert: {
-          id?: string
-          image_path?: string | null
-          name: string
-          producer_user_id: string
-          serving_size?: number | null
-          unit_weight?: number | null
-        }
-        Update: {
-          id?: string
-          image_path?: string | null
-          name?: string
-          producer_user_id?: string
-          serving_size?: number | null
-          unit_weight?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "brand_producer_user_id_fkey"
-            columns: ["producer_user_id"]
-            referencedRelation: "producer_user"
-            referencedColumns: ["id"]
-          }
-        ]
-      }
       co_molecule: {
         Row: {
           co_molecule_id: string
@@ -206,6 +215,21 @@ export interface Database {
           }
         ]
       }
+      country: {
+        Row: {
+          country_name: string
+          id: string
+        }
+        Insert: {
+          country_name: string
+          id?: string
+        }
+        Update: {
+          country_name?: string
+          id?: string
+        }
+        Relationships: []
+      }
       effect: {
         Row: {
           description: string | null
@@ -226,27 +250,33 @@ export interface Database {
       }
       facility: {
         Row: {
+          address_id: string | null
           description: string | null
           id: string
-          location: string | null
           name: string
           producer_id: string | null
         }
         Insert: {
+          address_id?: string | null
           description?: string | null
           id?: string
-          location?: string | null
           name: string
           producer_id?: string | null
         }
         Update: {
+          address_id?: string | null
           description?: string | null
           id?: string
-          location?: string | null
           name?: string
           producer_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "facility_address_id_fkey"
+            columns: ["address_id"]
+            referencedRelation: "address"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "facility_producer_id_fkey"
             columns: ["producer_id"]
@@ -273,13 +303,32 @@ export interface Database {
         }
         Relationships: []
       }
+      insurance_user: {
+        Row: {
+          id: string
+        }
+        Insert: {
+          id: string
+        }
+        Update: {
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "insurance_user_id_fkey"
+            columns: ["id"]
+            referencedRelation: "user"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       lab_order: {
         Row: {
+          address_id: string | null
           batch_id: string | null
           id: string
           lab_notes: string | null
           lab_user_id: string | null
-          location: string | null
           order_time: string
           pickup_date: string | null
           turnaround_time:
@@ -287,11 +336,11 @@ export interface Database {
             | null
         }
         Insert: {
+          address_id?: string | null
           batch_id?: string | null
           id?: string
           lab_notes?: string | null
           lab_user_id?: string | null
-          location?: string | null
           order_time?: string
           pickup_date?: string | null
           turnaround_time?:
@@ -299,11 +348,11 @@ export interface Database {
             | null
         }
         Update: {
+          address_id?: string | null
           batch_id?: string | null
           id?: string
           lab_notes?: string | null
           lab_user_id?: string | null
-          location?: string | null
           order_time?: string
           pickup_date?: string | null
           turnaround_time?:
@@ -311,6 +360,12 @@ export interface Database {
             | null
         }
         Relationships: [
+          {
+            foreignKeyName: "lab_order_address_id_fkey"
+            columns: ["address_id"]
+            referencedRelation: "address"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "lab_order_batch_id_fkey"
             columns: ["batch_id"]
@@ -329,7 +384,7 @@ export interface Database {
         Row: {
           contact_phone: string | null
           id: string
-          lab_address: string | null
+          lab_address_id: string | null
           lab_name: string | null
           license_number: number | null
           owner_name: string | null
@@ -337,7 +392,7 @@ export interface Database {
         Insert: {
           contact_phone?: string | null
           id: string
-          lab_address?: string | null
+          lab_address_id?: string | null
           lab_name?: string | null
           license_number?: number | null
           owner_name?: string | null
@@ -345,7 +400,7 @@ export interface Database {
         Update: {
           contact_phone?: string | null
           id?: string
-          lab_address?: string | null
+          lab_address_id?: string | null
           lab_name?: string | null
           license_number?: number | null
           owner_name?: string | null
@@ -355,6 +410,12 @@ export interface Database {
             foreignKeyName: "lab_user_id_fkey"
             columns: ["id"]
             referencedRelation: "user"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lab_user_lab_address_id_fkey"
+            columns: ["lab_address_id"]
+            referencedRelation: "address"
             referencedColumns: ["id"]
           }
         ]
@@ -499,21 +560,28 @@ export interface Database {
           description: string | null
           id: string
           legal_limit: number | null
-          state: string | null
+          state_id: string | null
         }
         Insert: {
           description?: string | null
           id?: string
           legal_limit?: number | null
-          state?: string | null
+          state_id?: string | null
         }
         Update: {
           description?: string | null
           id?: string
           legal_limit?: number | null
-          state?: string | null
+          state_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "molecule_wiki_state_id_fkey"
+            columns: ["state_id"]
+            referencedRelation: "state"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       plant: {
         Row: {
@@ -738,7 +806,7 @@ export interface Database {
           legal_name: string | null
           license_number: string | null
           license_type: Database["public"]["Enums"]["license_type_enum"] | null
-          primary_facility_address: string | null
+          primary_facility_address_id: string | null
         }
         Insert: {
           billing_address?: string | null
@@ -748,7 +816,7 @@ export interface Database {
           legal_name?: string | null
           license_number?: string | null
           license_type?: Database["public"]["Enums"]["license_type_enum"] | null
-          primary_facility_address?: string | null
+          primary_facility_address_id?: string | null
         }
         Update: {
           billing_address?: string | null
@@ -758,13 +826,19 @@ export interface Database {
           legal_name?: string | null
           license_number?: string | null
           license_type?: Database["public"]["Enums"]["license_type_enum"] | null
-          primary_facility_address?: string | null
+          primary_facility_address_id?: string | null
         }
         Relationships: [
           {
             foreignKeyName: "producer_user_id_fkey"
             columns: ["id"]
             referencedRelation: "user"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "producer_user_primary_facility_address_id_fkey"
+            columns: ["primary_facility_address_id"]
+            referencedRelation: "address"
             referencedColumns: ["id"]
           }
         ]
@@ -773,19 +847,19 @@ export interface Database {
         Row: {
           contact_phone: string | null
           id: string
-          mailing_address: string | null
+          mailing_address_id: string | null
           regulator_name: string | null
         }
         Insert: {
           contact_phone?: string | null
           id: string
-          mailing_address?: string | null
+          mailing_address_id?: string | null
           regulator_name?: string | null
         }
         Update: {
           contact_phone?: string | null
           id?: string
-          mailing_address?: string | null
+          mailing_address_id?: string | null
           regulator_name?: string | null
         }
         Relationships: [
@@ -793,6 +867,12 @@ export interface Database {
             foreignKeyName: "regulator_user_id_fkey"
             columns: ["id"]
             referencedRelation: "user"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "regulator_user_mailing_address_id_fkey"
+            columns: ["mailing_address_id"]
+            referencedRelation: "address"
             referencedColumns: ["id"]
           }
         ]
@@ -816,24 +896,55 @@ export interface Database {
           }
         ]
       }
+      state: {
+        Row: {
+          country_id: string
+          id: string
+          service_provided: boolean
+          state_abbreviation: string
+          state_name: string
+        }
+        Insert: {
+          country_id: string
+          id?: string
+          service_provided?: boolean
+          state_abbreviation: string
+          state_name: string
+        }
+        Update: {
+          country_id?: string
+          id?: string
+          service_provided?: boolean
+          state_abbreviation?: string
+          state_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "state_country_id_fkey"
+            columns: ["country_id"]
+            referencedRelation: "country"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       university_user: {
         Row: {
           id: string
-          lab_address: string | null
+          lab_address_id: string | null
           primary_investigator: string | null
           university_department: string | null
           university_name: string | null
         }
         Insert: {
           id: string
-          lab_address?: string | null
+          lab_address_id?: string | null
           primary_investigator?: string | null
           university_department?: string | null
           university_name?: string | null
         }
         Update: {
           id?: string
-          lab_address?: string | null
+          lab_address_id?: string | null
           primary_investigator?: string | null
           university_department?: string | null
           university_name?: string | null
@@ -843,6 +954,12 @@ export interface Database {
             foreignKeyName: "university_user_id_fkey"
             columns: ["id"]
             referencedRelation: "user"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "university_user_lab_address_id_fkey"
+            columns: ["lab_address_id"]
+            referencedRelation: "address"
             referencedColumns: ["id"]
           }
         ]
@@ -950,7 +1067,7 @@ export interface Database {
         | "Solvents"
         | "Metals"
         | "Others"
-      product_type_enum: "flower" | "concentrate" | "edibles"
+      product_type_enum: "flower" | "concentrate" | "edibles" | "infusion"
       turnaround_time_enum: "48" | "96" | "168" | "336"
       user_type_enum:
         | "consumer"
@@ -959,6 +1076,7 @@ export interface Database {
         | "producer"
         | "university"
         | "sampling_firm"
+        | "insurance"
     }
     CompositeTypes: {
       [_ in never]: never

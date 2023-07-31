@@ -17,8 +17,24 @@ interface Props {
   predicted_molecules?: PredictedMolecule[];
 }
 
+export default function LabOrderParent({
+  stage,
+  error,
+  metadata,
+  lab_order,
+  predicted_molecules,
+}: Props) {
+  return (
+    <div className="h-screen dark:bg-black m-0 p-4">
+      <LabOrder
+        {...{ stage, error, metadata, lab_order, predicted_molecules }}
+      />
+    </div>
+  );
+}
+
 // this component acts as a switch to control what is rendered
-export default function LabOrder({
+export function LabOrder({
   stage,
   error,
   metadata,

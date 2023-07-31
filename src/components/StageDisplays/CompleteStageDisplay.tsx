@@ -1,16 +1,16 @@
-import { LabOrder, Metadata, PredictedMolecule } from "@/types/DisplayTypes"
-import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded"
-import GppBadOutlinedIcon from "@mui/icons-material/GppBadOutlined"
-import GppGoodOutlinedIcon from "@mui/icons-material/GppGoodOutlined"
-import Head from "next/head"
-import { useState } from "react"
-import MoleculePopup from "../MoleculePopup"
-import ProductInfo from "../ProductInfo"
+import { LabOrder, Metadata, PredictedMolecule } from "@/types/DisplayTypes";
+import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
+import GppBadOutlinedIcon from "@mui/icons-material/GppBadOutlined";
+import GppGoodOutlinedIcon from "@mui/icons-material/GppGoodOutlined";
+import Head from "next/head";
+import { useState } from "react";
+import MoleculePopup from "../MoleculePopup";
+import ProductInfo from "../ProductInfo";
 
 export interface OrderDisplayProps {
-  metadata: Metadata
-  lab_order: LabOrder
-  predicted_molecules: PredictedMolecule[]
+  metadata: Metadata;
+  lab_order: LabOrder;
+  predicted_molecules: PredictedMolecule[];
 }
 
 export function concentrationDisplay(
@@ -23,9 +23,9 @@ export function concentrationDisplay(
       "mg • " +
       molecule?.concentration * 100 +
       "%"
-    )
+    );
   } else {
-    return "Concentration not available"
+    return "Concentration not available";
   }
 }
 
@@ -36,10 +36,10 @@ export default function OrderDisplay({
 }: OrderDisplayProps) {
   const [moleculeShown, setMoleculeShown] = useState<PredictedMolecule | null>(
     null
-  )
+  );
 
   return (
-    <>
+    <div>
       <Head>
         <title>Plantalysis by Altum Labs - QR Site</title>
         <meta
@@ -47,7 +47,7 @@ export default function OrderDisplay({
           content="Get lab results fast, easy, and transparently."
         />
       </Head>
-      <div className="prose max-w-none leading-normal flex flex-col items-start text-left m-4">
+      <div className="prose max-w-none leading-normal flex flex-col items-center text-left dark:text-white">
         <MoleculePopup
           molecule={moleculeShown}
           setMoleculeShown={setMoleculeShown}
@@ -55,7 +55,7 @@ export default function OrderDisplay({
         />
         <ProductInfo metadata={metadata} lab_order={lab_order} />
         <div className="m-3">
-          <h2 className="mt-4 mb-2">Ingredients</h2>
+          <h2 className="mt-4 mb-2 dark:text-white">Ingredients</h2>
           {predicted_molecules.map((predicted_molecule) => (
             <div
               key={predicted_molecule.id}
@@ -75,7 +75,7 @@ export default function OrderDisplay({
                   </div>
                 </div>
               ) : (
-                <div className="pt-5">
+                <div>
                   <div className="w-10 h-10 bg-gradient-to-r from-red-400 via-red-400 to-red-500 rounded-full flex flex-col items-center justify-center">
                     <center>
                       <GppBadOutlinedIcon className="mt-1" fontSize="large" />
@@ -98,6 +98,6 @@ export default function OrderDisplay({
           ))}
         </div>
       </div>
-    </>
-  )
+    </div>
+  );
 }
