@@ -107,7 +107,19 @@ class MoleculeStructure extends Component {
     const isValidMol = this.isValidMol(mol)
 
     if (this.props.svgMode && isValidMol) {
-      const svg = mol.get_svg_with_highlights(this.getMolDetails(mol, qmol))
+      let svg = mol.get_svg_with_highlights(this.getMolDetails(mol, qmol))
+
+      // Replace white background with transparent one
+      svg = svg.replace("fill:#FFFFFF", "fill:transparent")
+
+      // Add a condition to check if the theme is dark
+      // Assuming you have a state or prop named `isDarkMode`
+      if (this.props.isDarkMode) {
+        // Replace black molecule color with white
+        svg = svg.replace(/fill:#000000/g, "fill:#FFFFFF")
+        svg = svg.replace(/stroke:#000000/g, "stroke:#FFFFFF")
+      }
+
       this.setState({ svg })
     } else if (isValidMol) {
       const canvas = document.getElementById(this.props.id)
@@ -190,6 +202,7 @@ class MoleculeStructure extends Component {
         prevProps.subStructure !== this.props.subStructure ||
         prevProps.width !== this.props.width ||
         prevProps.height !== this.props.height ||
+        prevProps.isDarkMode !== this.props.isDarkMode || // Add this line
         !_.isEqual(prevProps.extraDetails, this.props.extraDetails)
 
       if (shouldUpdateDrawing) {
