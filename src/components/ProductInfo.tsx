@@ -1,24 +1,24 @@
-import { LabOrder, Metadata } from "@/types/DisplayTypes";
-import GppBadOutlinedIcon from "@mui/icons-material/GppBadOutlined";
-import GppGoodOutlinedIcon from "@mui/icons-material/GppGoodOutlined";
+import { LabOrder, Metadata } from "@/types/DisplayTypes"
+import GppBadOutlinedIcon from "@mui/icons-material/GppBadOutlined"
+import GppGoodOutlinedIcon from "@mui/icons-material/GppGoodOutlined"
 
 interface Props {
-  lab_order: LabOrder;
-  metadata: Metadata;
+  lab_order: LabOrder
+  metadata: Metadata
 }
 
 function formatTimestampTZ(timestampTZ: string | null) {
   if (timestampTZ === null) {
-    return "No timestamp available";
+    return "No timestamp available"
   }
-  const date = new Date(timestampTZ);
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  const year = date.getFullYear();
-  const hour = String(date.getHours()).padStart(2, "0");
-  const minute = String(date.getMinutes()).padStart(2, "0");
+  const date = new Date(timestampTZ)
+  const month = String(date.getMonth() + 1).padStart(2, "0")
+  const day = String(date.getDate()).padStart(2, "0")
+  const year = date.getFullYear()
+  const hour = String(date.getHours()).padStart(2, "0")
+  const minute = String(date.getMinutes()).padStart(2, "0")
 
-  return `${month}/${day}/${year} ${hour}:${minute}`;
+  return `${month}/${day}/${year} ${hour}:${minute}`
 }
 
 /**
@@ -57,7 +57,7 @@ export default function ProductInfo({ lab_order, metadata }: Props) {
       </div>
       <div className="mt-8">
         {metadata.approved ? (
-          <div className="bg-gradient-to-r from-green-400 via-green-400 to-green-500 dark:text-white py-2 px-2 rounded-full inline-block">
+          <div className="bg-gradient-to-r from-green-400 via-green-400 to-green-500 text-white py-2 px-2 rounded-full inline-block">
             <GppGoodOutlinedIcon className="mr-1" fontSize="large" />
             <span className="font-bold text-sm mr-3 tracking-wider">
               PASSED
@@ -79,5 +79,5 @@ export default function ProductInfo({ lab_order, metadata }: Props) {
         )}
       </div>
     </div>
-  );
+  )
 }
