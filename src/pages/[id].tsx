@@ -1,20 +1,20 @@
-import "@/app/globals.css";
-import GeneralError from "@/components/Errors/GeneralError";
-import RedFlagError from "@/components/Errors/RedFlagError";
-import Footer from "@/components/Footer";
-import AnalysisStageDisplay from "@/components/StageDisplays/AnalysisStageDisplay";
-import { default as CompleteStageDisplay } from "@/components/StageDisplays/CompleteStageDisplay";
-import LabStageDisplay from "@/components/StageDisplays/LabStageDisplay";
-import { LabOrder, Metadata, PredictedMolecule } from "@/types/DisplayTypes";
-import { STAGE } from "@/types/Stage";
-import { supabase } from "@/utils/supabase";
+import "@/app/globals.css"
+import GeneralError from "@/components/Errors/GeneralError"
+import RedFlagError from "@/components/Errors/RedFlagError"
+import Footer from "@/components/Footer"
+import AnalysisStageDisplay from "@/components/StageDisplays/AnalysisStageDisplay"
+import { default as CompleteStageDisplay } from "@/components/StageDisplays/CompleteStageDisplay"
+import LabStageDisplay from "@/components/StageDisplays/LabStageDisplay"
+import { LabOrder, Metadata, PredictedMolecule } from "@/types/DisplayTypes"
+import { STAGE } from "@/types/Stage"
+import { supabase } from "@/utils/supabase"
 
 interface Props {
-  stage: STAGE;
-  metadata: Metadata;
-  error?: any;
-  lab_order?: LabOrder;
-  predicted_molecules?: PredictedMolecule[];
+  stage: STAGE
+  metadata: Metadata
+  error?: any
+  lab_order?: LabOrder
+  predicted_molecules?: PredictedMolecule[]
 }
 
 export default function LabOrderParent({
@@ -30,7 +30,7 @@ export default function LabOrderParent({
         {...{ stage, error, metadata, lab_order, predicted_molecules }}
       />
     </div>
-  );
+  )
 }
 
 // this component acts as a switch to control what is rendered
@@ -47,15 +47,15 @@ export function LabOrder({
         <GeneralError error={error} />
         <Footer />
       </>
-    );
+    )
   }
 
   if (stage === STAGE.LAB && lab_order !== undefined) {
-    return <LabStageDisplay metadata={metadata} lab_order={lab_order} />;
+    return <LabStageDisplay metadata={metadata} lab_order={lab_order} />
   }
 
   if (stage === STAGE.ANALYSIS && lab_order !== undefined) {
-    return <AnalysisStageDisplay metadata={metadata} lab_order={lab_order} />;
+    return <AnalysisStageDisplay metadata={metadata} lab_order={lab_order} />
   }
 
   if (
@@ -69,20 +69,20 @@ export function LabOrder({
         lab_order={lab_order}
         predicted_molecules={predicted_molecules}
       />
-    );
+    )
   }
 
   // something with the switch failed, throw a general error
-  return <RedFlagError />;
+  return <RedFlagError />
 }
 
 export async function getStaticProps({
   params,
 }: {
-  params: { id: string };
+  params: { id: string }
 }): Promise<{ props: Props }> {
   // get id from route of url
-  const { id } = params;
+  const { id } = params
 
   // fetch raw data from backend. we know this order exists, or else it would
   // never be prerendered.
@@ -101,11 +101,11 @@ export async function getStaticProps({
       batch ( *, 
         producer:producer_user ( * )
       ),
-      lab:lab_user ( * )
+      lab:lab_facility ( * )
     `
     )
     .eq("id", id)
-    .single();
+    .single()
 
   // console.log(labOrder);
 
@@ -122,26 +122,30 @@ export async function getStaticProps({
           decision_time: null,
         },
       },
-    };
+    }
   }
 
   // attempt to get brand info. this only works if the
   // producer -> brand -> batch -> lot -> sample -> run -> analysis
   // relationship is maintained
-  const batch = labOrder?.batch || null;
-  const producer = batch?.producer || null;
-  const analyses = labOrder?.analyses || null;
-  const lab = labOrder?.lab || null;
+  const batch = labOrder?.batch || null
+  const producer = batch?.producer || null
+  const analyses = labOrder?.analyses || null
+  const lab = labOrder?.lab || null
 
   // sort analyses by most recent
-  const analysesSorted = analyses.sort((a, b) => {
-    return a.finished_at > b.finished_at ? -1 : 1;
-  });
+  const analysesSorted =
+    analyses &&
+    analyses.sort((a, b) => {
+      return a.finished_at > b.finished_at ? -1 : 1
+    })
 
   // pick the first analysis that is approved or go with the most recent
   const analysis =
-    analysesSorted.find((analysis) => analysis.regulator_approved) ||
-    analysesSorted[0];
+    (analysesSorted &&
+      analysesSorted.find((analysis) => analysis.regulator_approved)) ||
+    analysesSorted?.[0] ||
+    null
 
   const metadata = {
     batch: batch,
@@ -149,7 +153,7 @@ export async function getStaticProps({
     lab: lab,
     approved: analysis?.regulator_approved || false,
     decision_time: analysis?.decision_time || null,
-  } as Metadata;
+  } as Metadata
 
   if (!analysis) {
     return {
@@ -158,7 +162,7 @@ export async function getStaticProps({
         metadata: metadata,
         lab_order: labOrder as LabOrder,
       },
-    };
+    }
   }
 
   const predicted_molecules = analysis.predicted_molecules.map(
@@ -167,7 +171,7 @@ export async function getStaticProps({
       molecule_wiki: predicted_molecule.molecule?.molecule_wiki || null,
       ...predicted_molecule.molecule,
     })
-  ) as PredictedMolecule[];
+  ) as PredictedMolecule[]
 
   if (!predicted_molecules) {
     return {
@@ -176,7 +180,7 @@ export async function getStaticProps({
         metadata: metadata,
         lab_order: labOrder as LabOrder,
       },
-    };
+    }
   }
 
   return {
@@ -187,28 +191,28 @@ export async function getStaticProps({
       // @ts-ignore
       predicted_molecules: predicted_molecules,
     },
-  };
+  }
 }
 
 export async function getStaticPaths() {
   // Determine all possible values for the slug
   // You could fetch these from a database or an API
   // Here, we'll use a mock list of slugs
-  const { data, error } = await supabase.from("lab_order").select("id");
+  const { data, error } = await supabase.from("lab_order").select("id")
 
-  if (!data) return [];
+  if (!data) return []
 
   if (error) {
-    console.log("error", error);
-    return [];
+    console.log("error", error)
+    return []
   }
 
-  const slugs = data.map(({ id }) => id.toString());
+  const slugs = data.map(({ id }) => id.toString())
 
-  const myPaths = slugs.map((id) => ({ params: { id } }));
+  const myPaths = slugs.map((id) => ({ params: { id } }))
 
   return {
     paths: myPaths,
     fallback: false, // or 'blocking' for on-demand SSR
-  };
+  }
 }
