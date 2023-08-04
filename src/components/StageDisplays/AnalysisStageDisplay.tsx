@@ -18,9 +18,10 @@ export default function AnalysisStageDisplay({ metadata, lab_order }: Props) {
           content="Get lab results fast, easy, and transparently."
         />
       </Head>
-      <div className="prose max-w-none text-center leading-normal flex flex-col items-center">
+      <div className="prose max-w-none text-center leading-normal flex flex-col items-center dark:text-white">
         <ProductInfo metadata={metadata} lab_order={lab_order} />
         <p>Analysis stage display</p>
+        <p>The order requested is currently under our analysis stage</p>
         <Footer />
       </div>
     </>

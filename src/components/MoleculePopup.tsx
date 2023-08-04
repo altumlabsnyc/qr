@@ -103,9 +103,6 @@ export default function MoleculePopup({
                       isDarkMode={isDarkMode}
                     />
                   )}
-                  <p className="text-sm text-red-500">
-                    d3.js graph of molecule data
-                  </p>
                 </div>
                 <br />
                 <center>

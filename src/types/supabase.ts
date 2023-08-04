@@ -12,149 +12,98 @@ export interface Database {
       address: {
         Row: {
           city: string
-          country_id: string
+          country_code: string
           id: string
           line_1: string
           line_2: string | null
           postal_code: string
-          state_id: string
+          state_code: string
         }
         Insert: {
           city: string
-          country_id: string
+          country_code: string
           id?: string
           line_1: string
           line_2?: string | null
           postal_code: string
-          state_id: string
+          state_code: string
         }
         Update: {
           city?: string
-          country_id?: string
+          country_code?: string
           id?: string
           line_1?: string
           line_2?: string | null
           postal_code?: string
-          state_id?: string
+          state_code?: string
         }
         Relationships: [
           {
-            foreignKeyName: "address_country_id_fkey"
-            columns: ["country_id"]
-            referencedRelation: "country"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "address_state_id_fkey"
-            columns: ["state_id"]
+            foreignKeyName: "fk_address_state"
+            columns: ["state_code", "country_code"]
             referencedRelation: "state"
-            referencedColumns: ["id"]
+            referencedColumns: ["state_code", "country_code"]
           }
         ]
       }
       analysis: {
         Row: {
-          aerobic_bacteria: number | null
-          aflatoxins: number | null
-          aspergillus: boolean
-          decision_time: string | null
-          e_coli: boolean
-          filth: number | null
           finished_at: string
-          foreign_material: number | null
           id: string
-          lab_order_id: string | null
-          moisture_content: number | null
-          ochratoxin_a: number | null
-          regulator_approved: boolean | null
-          salmonella: boolean
+          regulator_review_id: string | null
           started_at: string | null
-          water_activity: number | null
-          yeast_mold: number | null
         }
         Insert: {
-          aerobic_bacteria?: number | null
-          aflatoxins?: number | null
-          aspergillus?: boolean
-          decision_time?: string | null
-          e_coli?: boolean
-          filth?: number | null
           finished_at?: string
-          foreign_material?: number | null
           id?: string
-          lab_order_id?: string | null
-          moisture_content?: number | null
-          ochratoxin_a?: number | null
-          regulator_approved?: boolean | null
-          salmonella?: boolean
+          regulator_review_id?: string | null
           started_at?: string | null
-          water_activity?: number | null
-          yeast_mold?: number | null
         }
         Update: {
-          aerobic_bacteria?: number | null
-          aflatoxins?: number | null
-          aspergillus?: boolean
-          decision_time?: string | null
-          e_coli?: boolean
-          filth?: number | null
           finished_at?: string
-          foreign_material?: number | null
           id?: string
-          lab_order_id?: string | null
-          moisture_content?: number | null
-          ochratoxin_a?: number | null
-          regulator_approved?: boolean | null
-          salmonella?: boolean
+          regulator_review_id?: string | null
           started_at?: string | null
-          water_activity?: number | null
-          yeast_mold?: number | null
         }
         Relationships: [
           {
-            foreignKeyName: "analysis_lab_order_id_fkey"
-            columns: ["lab_order_id"]
-            referencedRelation: "lab_order"
+            foreignKeyName: "analysis_regulator_review_id_fkey"
+            columns: ["regulator_review_id"]
+            referencedRelation: "regulator_review"
             referencedColumns: ["id"]
           }
         ]
       }
       batch: {
         Row: {
-          facility_id: string | null
           id: string
+          producer_facility_id: string | null
           producer_user_id: string | null
-          product_type: Database["public"]["Enums"]["product_type_enum"] | null
           serving_size: number | null
-          strain: string | null
           unit_weight: number | null
           weight: number | null
         }
         Insert: {
-          facility_id?: string | null
           id?: string
+          producer_facility_id?: string | null
           producer_user_id?: string | null
-          product_type?: Database["public"]["Enums"]["product_type_enum"] | null
           serving_size?: number | null
-          strain?: string | null
           unit_weight?: number | null
           weight?: number | null
         }
         Update: {
-          facility_id?: string | null
           id?: string
+          producer_facility_id?: string | null
           producer_user_id?: string | null
-          product_type?: Database["public"]["Enums"]["product_type_enum"] | null
           serving_size?: number | null
-          strain?: string | null
           unit_weight?: number | null
           weight?: number | null
         }
         Relationships: [
           {
-            foreignKeyName: "batch_facility_id_fkey"
-            columns: ["facility_id"]
-            referencedRelation: "facility"
+            foreignKeyName: "batch_producer_facility_id_fkey"
+            columns: ["producer_facility_id"]
+            referencedRelation: "producer_facility"
             referencedColumns: ["id"]
           },
           {
@@ -217,16 +166,52 @@ export interface Database {
       }
       country: {
         Row: {
+          country_code: string
           country_name: string
-          id: string
         }
         Insert: {
+          country_code: string
           country_name: string
-          id?: string
         }
         Update: {
+          country_code?: string
           country_name?: string
+        }
+        Relationships: []
+      }
+      demos_scheduled: {
+        Row: {
+          company: string | null
+          created_at: string | null
+          email: string | null
+          first_name: string | null
+          id: string
+          job_title: string | null
+          last_name: string | null
+          phone: string | null
+          state: string | null
+        }
+        Insert: {
+          company?: string | null
+          created_at?: string | null
+          email?: string | null
+          first_name?: string | null
           id?: string
+          job_title?: string | null
+          last_name?: string | null
+          phone?: string | null
+          state?: string | null
+        }
+        Update: {
+          company?: string | null
+          created_at?: string | null
+          email?: string | null
+          first_name?: string | null
+          id?: string
+          job_title?: string | null
+          last_name?: string | null
+          phone?: string | null
+          state?: string | null
         }
         Relationships: []
       }
@@ -247,43 +232,6 @@ export interface Database {
           is_mental?: boolean | null
         }
         Relationships: []
-      }
-      facility: {
-        Row: {
-          address_id: string | null
-          description: string | null
-          id: string
-          name: string
-          producer_id: string | null
-        }
-        Insert: {
-          address_id?: string | null
-          description?: string | null
-          id?: string
-          name: string
-          producer_id?: string | null
-        }
-        Update: {
-          address_id?: string | null
-          description?: string | null
-          id?: string
-          name?: string
-          producer_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "facility_address_id_fkey"
-            columns: ["address_id"]
-            referencedRelation: "address"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "facility_producer_id_fkey"
-            columns: ["producer_id"]
-            referencedRelation: "producer_user"
-            referencedColumns: ["id"]
-          }
-        ]
       }
       fragment: {
         Row: {
@@ -308,7 +256,7 @@ export interface Database {
           id: string
         }
         Insert: {
-          id: string
+          id?: string
         }
         Update: {
           id?: string
@@ -322,13 +270,50 @@ export interface Database {
           }
         ]
       }
+      lab_facility: {
+        Row: {
+          address_id: string
+          description: string | null
+          id: string
+          lab_user_id: string
+          name: string
+        }
+        Insert: {
+          address_id: string
+          description?: string | null
+          id?: string
+          lab_user_id: string
+          name?: string
+        }
+        Update: {
+          address_id?: string
+          description?: string | null
+          id?: string
+          lab_user_id?: string
+          name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lab_facility_address_id_fkey"
+            columns: ["address_id"]
+            referencedRelation: "address"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lab_facility_lab_user_id_fkey"
+            columns: ["lab_user_id"]
+            referencedRelation: "lab_user"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       lab_order: {
         Row: {
-          address_id: string | null
+          analysis_id: string | null
           batch_id: string | null
           id: string
+          lab_facility_id: string | null
           lab_notes: string | null
-          lab_user_id: string | null
           order_time: string
           pickup_date: string | null
           turnaround_time:
@@ -336,11 +321,11 @@ export interface Database {
             | null
         }
         Insert: {
-          address_id?: string | null
+          analysis_id?: string | null
           batch_id?: string | null
           id?: string
+          lab_facility_id?: string | null
           lab_notes?: string | null
-          lab_user_id?: string | null
           order_time?: string
           pickup_date?: string | null
           turnaround_time?:
@@ -348,11 +333,11 @@ export interface Database {
             | null
         }
         Update: {
-          address_id?: string | null
+          analysis_id?: string | null
           batch_id?: string | null
           id?: string
+          lab_facility_id?: string | null
           lab_notes?: string | null
-          lab_user_id?: string | null
           order_time?: string
           pickup_date?: string | null
           turnaround_time?:
@@ -361,9 +346,9 @@ export interface Database {
         }
         Relationships: [
           {
-            foreignKeyName: "lab_order_address_id_fkey"
-            columns: ["address_id"]
-            referencedRelation: "address"
+            foreignKeyName: "lab_order_analysis_id_fkey"
+            columns: ["analysis_id"]
+            referencedRelation: "analysis"
             referencedColumns: ["id"]
           },
           {
@@ -373,9 +358,37 @@ export interface Database {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "lab_order_lab_user_id_fkey"
-            columns: ["lab_user_id"]
-            referencedRelation: "lab_user"
+            foreignKeyName: "lab_order_lab_facility_id_fkey"
+            columns: ["lab_facility_id"]
+            referencedRelation: "lab_facility"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      lab_order_on_test: {
+        Row: {
+          lab_order_id: string
+          test_id: string
+        }
+        Insert: {
+          lab_order_id: string
+          test_id: string
+        }
+        Update: {
+          lab_order_id?: string
+          test_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lab_order_on_test_lab_order_id_fkey"
+            columns: ["lab_order_id"]
+            referencedRelation: "lab_order"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lab_order_on_test_test_id_fkey"
+            columns: ["test_id"]
+            referencedRelation: "test"
             referencedColumns: ["id"]
           }
         ]
@@ -384,26 +397,26 @@ export interface Database {
         Row: {
           contact_phone: string | null
           id: string
-          lab_address_id: string | null
           lab_name: string | null
-          license_number: number | null
+          license_number: string | null
           owner_name: string | null
+          parent_id: string | null
         }
         Insert: {
           contact_phone?: string | null
           id: string
-          lab_address_id?: string | null
           lab_name?: string | null
-          license_number?: number | null
+          license_number?: string | null
           owner_name?: string | null
+          parent_id?: string | null
         }
         Update: {
           contact_phone?: string | null
           id?: string
-          lab_address_id?: string | null
           lab_name?: string | null
-          license_number?: number | null
+          license_number?: string | null
           owner_name?: string | null
+          parent_id?: string | null
         }
         Relationships: [
           {
@@ -413,9 +426,9 @@ export interface Database {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "lab_user_lab_address_id_fkey"
-            columns: ["lab_address_id"]
-            referencedRelation: "address"
+            foreignKeyName: "lab_user_parent_id_fkey"
+            columns: ["parent_id"]
+            referencedRelation: "lab_user"
             referencedColumns: ["id"]
           }
         ]
@@ -557,29 +570,32 @@ export interface Database {
       }
       molecule_wiki: {
         Row: {
+          country_code: string | null
           description: string | null
           id: string
           legal_limit: number | null
-          state_id: string | null
+          state_code: string | null
         }
         Insert: {
+          country_code?: string | null
           description?: string | null
           id?: string
           legal_limit?: number | null
-          state_id?: string | null
+          state_code?: string | null
         }
         Update: {
+          country_code?: string | null
           description?: string | null
           id?: string
           legal_limit?: number | null
-          state_id?: string | null
+          state_code?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "molecule_wiki_state_id_fkey"
-            columns: ["state_id"]
+            foreignKeyName: "fk_molecule_wiki_state"
+            columns: ["state_code", "country_code"]
             referencedRelation: "state"
-            referencedColumns: ["id"]
+            referencedColumns: ["state_code", "country_code"]
           }
         ]
       }
@@ -755,6 +771,43 @@ export interface Database {
           }
         ]
       }
+      producer_facility: {
+        Row: {
+          address_id: string | null
+          description: string | null
+          id: string
+          name: string
+          producer_user_id: string
+        }
+        Insert: {
+          address_id?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+          producer_user_id: string
+        }
+        Update: {
+          address_id?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+          producer_user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "producer_facility_address_id_fkey"
+            columns: ["address_id"]
+            referencedRelation: "address"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "producer_facility_producer_user_id_fkey"
+            columns: ["producer_user_id"]
+            referencedRelation: "producer_user"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       producer_prefill: {
         Row: {
           business_name: string | null
@@ -799,34 +852,25 @@ export interface Database {
       }
       producer_user: {
         Row: {
-          billing_address: string | null
           common_name: string | null
-          contact_phone: string | null
           id: string
           legal_name: string | null
           license_number: string | null
           license_type: Database["public"]["Enums"]["license_type_enum"] | null
-          primary_facility_address_id: string | null
         }
         Insert: {
-          billing_address?: string | null
           common_name?: string | null
-          contact_phone?: string | null
           id: string
           legal_name?: string | null
           license_number?: string | null
           license_type?: Database["public"]["Enums"]["license_type_enum"] | null
-          primary_facility_address_id?: string | null
         }
         Update: {
-          billing_address?: string | null
           common_name?: string | null
-          contact_phone?: string | null
           id?: string
           legal_name?: string | null
           license_number?: string | null
           license_type?: Database["public"]["Enums"]["license_type_enum"] | null
-          primary_facility_address_id?: string | null
         }
         Relationships: [
           {
@@ -834,11 +878,36 @@ export interface Database {
             columns: ["id"]
             referencedRelation: "user"
             referencedColumns: ["id"]
-          },
+          }
+        ]
+      }
+      regulator_review: {
+        Row: {
+          approved: boolean
+          created_at: string
+          id: string
+          notes: string
+          regulator_user_id: string
+        }
+        Insert: {
+          approved?: boolean
+          created_at?: string
+          id?: string
+          notes?: string
+          regulator_user_id: string
+        }
+        Update: {
+          approved?: boolean
+          created_at?: string
+          id?: string
+          notes?: string
+          regulator_user_id?: string
+        }
+        Relationships: [
           {
-            foreignKeyName: "producer_user_primary_facility_address_id_fkey"
-            columns: ["primary_facility_address_id"]
-            referencedRelation: "address"
+            foreignKeyName: "regulator_review_regulator_user_id_fkey"
+            columns: ["regulator_user_id"]
+            referencedRelation: "regulator_user"
             referencedColumns: ["id"]
           }
         ]
@@ -882,7 +951,7 @@ export interface Database {
           id: string
         }
         Insert: {
-          id: string
+          id?: string
         }
         Update: {
           id?: string
@@ -898,31 +967,178 @@ export interface Database {
       }
       state: {
         Row: {
-          country_id: string
-          id: string
-          service_provided: boolean
-          state_abbreviation: string
+          country_code: string
+          state_code: string
           state_name: string
+          supported: boolean
         }
         Insert: {
-          country_id: string
-          id?: string
-          service_provided?: boolean
-          state_abbreviation: string
+          country_code: string
+          state_code: string
           state_name: string
+          supported?: boolean
         }
         Update: {
-          country_id?: string
-          id?: string
-          service_provided?: boolean
-          state_abbreviation?: string
+          country_code?: string
+          state_code?: string
           state_name?: string
+          supported?: boolean
+        }
+        Relationships: []
+      }
+      test: {
+        Row: {
+          enabled: boolean
+          id: string
+          name: string
+          test_category_name: string
+        }
+        Insert: {
+          enabled: boolean
+          id?: string
+          name: string
+          test_category_name: string
+        }
+        Update: {
+          enabled?: boolean
+          id?: string
+          name?: string
+          test_category_name?: string
         }
         Relationships: [
           {
-            foreignKeyName: "state_country_id_fkey"
-            columns: ["country_id"]
+            foreignKeyName: "test_test_category_name_fkey"
+            columns: ["test_category_name"]
+            referencedRelation: "test_category"
+            referencedColumns: ["name"]
+          }
+        ]
+      }
+      test_category: {
+        Row: {
+          enabled: boolean
+          name: string
+        }
+        Insert: {
+          enabled: boolean
+          name: string
+        }
+        Update: {
+          enabled?: boolean
+          name?: string
+        }
+        Relationships: []
+      }
+      test_requirement: {
+        Row: {
+          country_code: string
+          description: string
+          id: string
+          name: string
+          state_code: string | null
+          test_id: string
+          type: Database["public"]["Enums"]["requirement_type"]
+        }
+        Insert: {
+          country_code: string
+          description?: string
+          id?: string
+          name?: string
+          state_code?: string | null
+          test_id: string
+          type: Database["public"]["Enums"]["requirement_type"]
+        }
+        Update: {
+          country_code?: string
+          description?: string
+          id?: string
+          name?: string
+          state_code?: string | null
+          test_id?: string
+          type?: Database["public"]["Enums"]["requirement_type"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_test_requirement"
+            columns: ["state_code", "country_code"]
+            referencedRelation: "state"
+            referencedColumns: ["state_code", "country_code"]
+          },
+          {
+            foreignKeyName: "test_requirement_country_code_fkey"
+            columns: ["country_code"]
             referencedRelation: "country"
+            referencedColumns: ["country_code"]
+          },
+          {
+            foreignKeyName: "test_requirement_test_id_fkey"
+            columns: ["test_id"]
+            referencedRelation: "test"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      test_result: {
+        Row: {
+          analysis_id: string
+          id: string
+          result: string
+          test_requirement_id: string
+        }
+        Insert: {
+          analysis_id: string
+          id?: string
+          result: string
+          test_requirement_id: string
+        }
+        Update: {
+          analysis_id?: string
+          id?: string
+          result?: string
+          test_requirement_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "test_result_analysis_id_fkey"
+            columns: ["analysis_id"]
+            referencedRelation: "analysis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "test_result_test_requirement_id_fkey"
+            columns: ["test_requirement_id"]
+            referencedRelation: "test_requirement"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      university_facility: {
+        Row: {
+          address_id: string
+          id: string
+          university_user_id: string
+        }
+        Insert: {
+          address_id: string
+          id?: string
+          university_user_id: string
+        }
+        Update: {
+          address_id?: string
+          id?: string
+          university_user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "university_facility_address_id_fkey"
+            columns: ["address_id"]
+            referencedRelation: "address"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "university_facility_university_user_id_fkey"
+            columns: ["university_user_id"]
+            referencedRelation: "university_user"
             referencedColumns: ["id"]
           }
         ]
@@ -930,21 +1146,18 @@ export interface Database {
       university_user: {
         Row: {
           id: string
-          lab_address_id: string | null
           primary_investigator: string | null
           university_department: string | null
           university_name: string | null
         }
         Insert: {
           id: string
-          lab_address_id?: string | null
           primary_investigator?: string | null
           university_department?: string | null
           university_name?: string | null
         }
         Update: {
           id?: string
-          lab_address_id?: string | null
           primary_investigator?: string | null
           university_department?: string | null
           university_name?: string | null
@@ -954,12 +1167,6 @@ export interface Database {
             foreignKeyName: "university_user_id_fkey"
             columns: ["id"]
             referencedRelation: "user"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "university_user_lab_address_id_fkey"
-            columns: ["lab_address_id"]
-            referencedRelation: "address"
             referencedColumns: ["id"]
           }
         ]
@@ -1068,6 +1275,15 @@ export interface Database {
         | "Metals"
         | "Others"
       product_type_enum: "flower" | "concentrate" | "edibles" | "infusion"
+      requirement_type:
+        | "boolean"
+        | "integer"
+        | "float"
+        | "string"
+        | "date"
+        | "timestamp"
+        | "text"
+        | "json"
       turnaround_time_enum: "48" | "96" | "168" | "336"
       user_type_enum:
         | "consumer"
