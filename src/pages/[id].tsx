@@ -147,6 +147,7 @@ export async function getStaticProps({
     analysesSorted?.[0] ||
     null
 
+  // @ts-ignore
   const metadata = {
     batch: batch,
     producer: producer,
