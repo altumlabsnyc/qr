@@ -34,12 +34,12 @@ export default function ProductInfo({ lab_order, metadata }: Props) {
     <div className="flex flex-col item-center text-left ml-4 dark:text-white">
       <h2 className="mt-5 dark:text-white">{metadata.producer?.common_name}</h2>
       <div className="grid grid-rows-6 grid-cols-3 grid-flow-col text-sm">
-        <div>SKU </div>
-        <div>Lab: </div>
-        <div>Cultivator: </div>
-        <div>Strain: </div>
-        <div>Unit Weight: </div>
-        <div>Serving Size: </div>
+        <div>SKU</div>
+        <div>Lab:</div>
+        <div>Cultivator:</div>
+        <div>Strain:</div>
+        <div>Unit Weight:</div>
+        <div>Serving Size:</div>
         <div className="col-span-2">
           #{lab_order.id || "No producer SKU specified"}
         </div>

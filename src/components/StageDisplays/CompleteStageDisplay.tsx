@@ -6,6 +6,7 @@ import Head from "next/head";
 import { useState } from "react";
 import MoleculePopup from "../MoleculePopup";
 import ProductInfo from "../ProductInfo";
+import Footer from "../Footer";
 
 export interface OrderDisplayProps {
   metadata: Metadata;
@@ -97,6 +98,7 @@ export default function OrderDisplay({
             </div>
           ))}
         </div>
+        <Footer />
       </div>
     </div>
   );

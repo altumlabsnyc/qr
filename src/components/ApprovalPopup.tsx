@@ -65,7 +65,7 @@ export default function ApprovalPopup({
                 <br />
                 <Dialog.Title
                   as="h3"
-                  className="text-lg font-bold leading-6 text-gray-900 dark:text-white"
+                  className="text-2xl font-bold leading-6 text-gray-900 dark:text-white"
                 >
                   Regulator:{" "}
                   {metadataShown?.regulator?.regulator_name ||
@@ -74,27 +74,36 @@ export default function ApprovalPopup({
                 <Dialog.Description className="mt-1 mb-2 font-semibold text-sm dark:text-white">
                   Review notes:{" "}
                   {metadataShown?.review?.notes || "No notes available"}
+                  <h3 className="dark:text-white font-bold pb-2 pt-3 text-xl">
+                    Location:{" "}
+                    {metadataShown?.requirements
+                      ? metadataShown.requirements[0].state_code +
+                        ", " +
+                        metadataShown.requirements[0].country_code
+                      : "No location available"}
+                  </h3>
                 </Dialog.Description>
-                <div className="text-gray-400">
-                  Test results:
-                  {setupResults(
-                    metadataShown?.results,
-                    metadataShown?.requirements
-                  )?.map((entry) => (
-                    <div className="grid grid-rows-4 grid-cols-2 grid-flow-col text-sm">
-                      <div>Result: </div>
-                      <div>Test requirement name: </div>
-                      <div>Requirement description: </div>
-                      <div>Requirement location: </div>
-                      <div>{entry[0].result}</div>
-                      <div>{entry[1].name}</div>
-                      <div>{entry[1].description}</div>
-                      <div>
-                        {entry[1].state_code}, {entry[1].country_code}
+                <h2 className="dark:text-white font-bold pb-2 pt-3 text-xl">
+                  Tests:
+                </h2>
+                {setupResults(
+                  metadataShown?.results,
+                  metadataShown?.requirements
+                )?.map((entry) => (
+                  <div>
+                    <div className="grid grid-rows-3 grid-cols-2 grid-flow-col gap-x-30 text-sm dark:text-white">
+                      <div className="font-semibold">Test name:</div>
+                      <div className="font-semibold">Description:</div>
+                      <div className="font-semibold">Result:</div>
+                      <div className="text-gray-300">{entry[1].name}</div>
+                      <div className="text-gray-300">
+                        {entry[1].description}
                       </div>
+                      <div className="text-gray-300">{entry[0].result}</div>
                     </div>
-                  ))}
-                </div>
+                    <br />
+                  </div>
+                ))}
                 <div className="flex flex-col items-center">another thing</div>
                 <br />
               </Dialog.Panel>
