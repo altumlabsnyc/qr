@@ -946,6 +946,43 @@ export interface Database {
           }
         ]
       }
+      sampling_firm_facility: {
+        Row: {
+          address_id: string
+          description: string
+          id: string
+          name: string
+          sampling_firm_user_id: string
+        }
+        Insert: {
+          address_id: string
+          description?: string
+          id?: string
+          name?: string
+          sampling_firm_user_id: string
+        }
+        Update: {
+          address_id?: string
+          description?: string
+          id?: string
+          name?: string
+          sampling_firm_user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sampling_firm_facility_address_id_fkey"
+            columns: ["address_id"]
+            referencedRelation: "address"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sampling_firm_facility_sampling_firm_user_id_fkey"
+            columns: ["sampling_firm_user_id"]
+            referencedRelation: "sampling_firm_user"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       sampling_firm_user: {
         Row: {
           id: string
