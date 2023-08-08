@@ -6,6 +6,7 @@ import Head from "next/head";
 import { useState } from "react";
 import MoleculePopup from "../MoleculePopup";
 import ProductInfo from "../ProductInfo";
+import Footer from "../Footer";
 
 export interface OrderDisplayProps {
   metadata: Metadata;
@@ -59,11 +60,11 @@ export default function OrderDisplay({
           {predicted_molecules.map((predicted_molecule) => (
             <div
               key={predicted_molecule.id}
-              className="grid grid-cols-3 gap-2 items-center mb-8 mt-8 cursor-pointer"
+              className="grid grid-cols-3 gap-2 items-center mb-8 mt-8 cursor-pointer transition-transform transform hover:scale-110"
               style={{ gridTemplateColumns: "auto 1fr auto" }}
               onClick={() => setMoleculeShown(predicted_molecule)}
             >
-              {metadata.approved ? (
+              {metadata.review?.approved ? (
                 <div>
                   <div className="w-10 h-10 bg-gradient-to-r from-green-400 via-green-400 to-green-500 rounded-full flex flex-col items-center justify-center">
                     <center>
@@ -97,6 +98,7 @@ export default function OrderDisplay({
             </div>
           ))}
         </div>
+        <Footer />
       </div>
     </div>
   );

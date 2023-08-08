@@ -91,11 +91,17 @@ export async function getStaticProps({
     .select(
       `
       *,
-      analyses:analysis ( *,
+      analysis ( *,
         predicted_molecules:molecule_prediction ( *,
           molecule ( *,
             molecule_wiki ( * )
           )
+        ),
+        regulator_review ( *,
+          regulator:regulator_user ( * )  
+        ),
+        results:test_result ( *,
+          requirement:test_requirement ( * )  
         )
       ),
       batch ( *, 
@@ -118,43 +124,34 @@ export async function getStaticProps({
           batch: null,
           producer: null,
           lab: null,
-          approved: false,
-          decision_time: null,
+          review: null,
+          regulator: null,
+          results: null,
+          requirements: null,
         },
       },
     }
   }
 
-  // attempt to get brand info. this only works if the
-  // producer -> brand -> batch -> lot -> sample -> run -> analysis
-  // relationship is maintained
-  const batch = labOrder?.batch || null
-  const producer = batch?.producer || null
-  const analyses = labOrder?.analyses || null
-  const lab = labOrder?.lab || null
-
-  // sort analyses by most recent
-  const analysesSorted =
-    analyses &&
-    analyses.sort((a, b) => {
-      return a.finished_at > b.finished_at ? -1 : 1
-    })
-
-  // pick the first analysis that is approved or go with the most recent
-  const analysis =
-    (analysesSorted &&
-      analysesSorted.find((analysis) => analysis.regulator_approved)) ||
-    analysesSorted?.[0] ||
-    null
+  const batch = labOrder?.batch || null;
+  const producer = batch?.producer || null;
+  const analysis = labOrder?.analysis || null;
+  const lab = labOrder?.lab || null;
+  const review = analysis?.regulator_review || null;
+  const regulator = review?.regulator || null;
+  const results = analysis?.results || null;
+  const requirements = results?.map((result) => result.requirement) || null;
 
   // @ts-ignore
   const metadata = {
     batch: batch,
     producer: producer,
     lab: lab,
-    approved: analysis?.regulator_approved || false,
-    decision_time: analysis?.decision_time || null,
-  } as Metadata
+    review: review,
+    regulator: regulator,
+    results: results,
+    requirements: requirements,
+  } as Metadata;
 
   if (!analysis) {
     return {
