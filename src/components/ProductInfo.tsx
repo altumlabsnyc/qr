@@ -31,36 +31,30 @@ export default function ProductInfo({ lab_order, metadata }: Props) {
   const [metadataShown, setMetadataShown] = useState<Metadata | null>(null);
 
   return (
-    <div className="flex flex-col item-center text-left ml-4 dark:text-white">
+    <div className="flex flex-col item-center text-left dark:text-white">
       <h2 className="mt-5 dark:text-white">{metadata.producer?.common_name}</h2>
-      <div className="grid grid-rows-6 grid-cols-3 grid-flow-col text-sm">
-        <div>SKU</div>
-        <div>Lab:</div>
-        <div>Cultivator:</div>
-        <div>Strain:</div>
-        <div>Unit Weight:</div>
-        <div>Serving Size:</div>
-        <div className="col-span-2">
-          #{lab_order.id || "No producer SKU specified"}
-        </div>
-        <div className="col-span-2">
-          {/* {metadata.lab?.lab_name || "No lab specified"} */}
-        </div>
-        <div className="col-span-2">
-          {metadata.producer?.legal_name || "No cultivator specified"}
-        </div>
-        <div className="col-span-2">
-          {/* {metadata.batch?.strain || "No strain specified"} */}
-        </div>
-        <div className="col-span-2">
-          {metadata.batch?.unit_weight
-            ? metadata.batch?.unit_weight + " g"
-            : "No unit weight specified"}
-        </div>
-        <div className="col-span-2">
-          {metadata.batch?.serving_size
-            ? metadata.batch?.serving_size + " mg"
-            : "No serving size specified"}
+      <div className="border border-transparent bg-gray-100 dark:bg-zinc-800 rounded-3xl p-4 my-2 shadow-md">
+        <div className="grid grid-rows-4 grid-cols-3 grid-flow-col gap-x-30 gap-y-2 text-sm dark:text-white">
+          <div className="font-semibold text-left">SKU</div>
+          <div className="font-semibold text-left">Cultivator:</div>
+          <div className="font-semibold text-left">Unit Weight:</div>
+          <div className="font-semibold text-left">Serving Size:</div>
+          <div className="col-span-2 text-right dark:text-zinc-400">
+            #{lab_order.id || "No producer SKU specified"}
+          </div>
+          <div className="col-span-2 text-right dark:text-zinc-400">
+            {metadata.producer?.legal_name || "No cultivator specified"}
+          </div>
+          <div className="col-span-2 text-right dark:text-zinc-400">
+            {metadata.batch?.unit_weight
+              ? metadata.batch?.unit_weight + " g"
+              : "No unit weight specified"}
+          </div>
+          <div className="col-span-2 text-right dark:text-zinc-400">
+            {metadata.batch?.serving_size
+              ? metadata.batch?.serving_size + " mg"
+              : "No serving size specified"}
+          </div>
         </div>
       </div>
       <div className="mt-8">

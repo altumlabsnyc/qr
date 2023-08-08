@@ -113,7 +113,7 @@ export async function getStaticProps({
     .eq("id", id)
     .single();
 
-  console.log(labOrder);
+  // console.log(labOrder);
 
   if (orderError) {
     return {

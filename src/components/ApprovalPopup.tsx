@@ -11,9 +11,9 @@ interface Props {
 function setupResults(
   result: TestResult[] | null | undefined,
   requirement: TestRequirement[] | null | undefined
-): [TestResult, TestRequirement][] {
+): [TestResult, TestRequirement][] | null {
   if (!result || !requirement) {
-    return [];
+    return null;
   }
   return result.map((result, index) => [result, requirement[index]]);
 }
@@ -25,6 +25,8 @@ export default function ApprovalPopup({
   function closeModal() {
     setMetadataShown(null);
   }
+
+  console.log(metadataShown?.requirements);
 
   return (
     <Transition appear show={metadataShown !== null} as={Fragment}>
@@ -65,47 +67,51 @@ export default function ApprovalPopup({
                 <br />
                 <Dialog.Title
                   as="h3"
-                  className="text-2xl font-bold leading-6 text-gray-900 dark:text-white"
+                  className="text-2xl font-bold leading-6 text-gray-900 dark:text-white mt-2"
                 >
-                  Regulator:{" "}
                   {metadataShown?.regulator?.regulator_name ||
                     "Regulator name not available"}
                 </Dialog.Title>
-                <Dialog.Description className="mt-1 mb-2 font-semibold text-sm dark:text-white">
-                  Review notes:{" "}
-                  {metadataShown?.review?.notes || "No notes available"}
-                  <h3 className="dark:text-white font-bold pb-2 pt-3 text-xl">
+                <Dialog.Description className="mt-2 font-semibold text-sm dark:text-white">
+                  <p className="mb-2">
+                    Review notes:{" "}
+                    {metadataShown?.review?.notes || "No notes available"}
+                  </p>
+                  <p className="mb-2 dark:text-white font-bold text-sm">
                     Location:{" "}
-                    {metadataShown?.requirements
+                    {metadataShown?.requirements &&
+                    metadataShown.requirements[0]
                       ? metadataShown.requirements[0].state_code +
                         ", " +
                         metadataShown.requirements[0].country_code
                       : "No location available"}
-                  </h3>
+                  </p>
                 </Dialog.Description>
+
                 <h2 className="dark:text-white font-bold pb-2 pt-3 text-xl">
-                  Tests:
+                  Tests
                 </h2>
                 {setupResults(
                   metadataShown?.results,
                   metadataShown?.requirements
                 )?.map((entry) => (
-                  <div>
-                    <div className="grid grid-rows-3 grid-cols-2 grid-flow-col gap-x-30 text-sm dark:text-white">
-                      <div className="font-semibold">Test name:</div>
-                      <div className="font-semibold">Description:</div>
-                      <div className="font-semibold">Result:</div>
-                      <div className="text-gray-300">{entry[1].name}</div>
-                      <div className="text-gray-300">
+                  <div className="border border-transparent bg-gray-100 dark:bg-zinc-800 rounded-3xl p-4 my-2 shadow-md">
+                    <div className="grid grid-rows-3 grid-cols-3 grid-flow-col gap-x-30 gap-y-2 text-sm dark:text-white">
+                      <div className="font-semibold text-left">Test name</div>
+                      <div className="font-semibold text-left">Description</div>
+                      <div className="font-semibold text-left">Result</div>
+                      <div className="dark:text-zinc-400 text-right col-span-2">
+                        {entry[1].name}
+                      </div>
+                      <div className="dark:text-zinc-400 text-right col-span-2">
                         {entry[1].description}
                       </div>
-                      <div className="text-gray-300">{entry[0].result}</div>
+                      <div className="dark:text-zinc-400 text-right col-span-2">
+                        {entry[0].result}
+                      </div>
                     </div>
-                    <br />
                   </div>
                 ))}
-                <div className="flex flex-col items-center">another thing</div>
-                <br />
               </Dialog.Panel>
             </Transition.Child>
           </div>
